@@ -52,6 +52,7 @@
 
 [Packages]
   MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
 
 
 [LibraryClasses]
@@ -84,6 +85,7 @@
   gEfiDevicePathProtocolGuid
   gEfiDiskIoProtocolGuid                        ## TO_START
   gEfiDiskIo2ProtocolGuid                       ## TO_START
+  gEfiPartitionNameProtocolGuid                 ## TO_START
 
 [UserExtensions.TianoCore."ExtraFiles"]
   PartitionDxeExtra.uni

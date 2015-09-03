@@ -1096,6 +1096,7 @@ PartitionFlushBlocksEx (
   @param[in]  End               End Block.
   @param[in]  BlockSize         Child block size.
   @param[in]  InstallEspGuid    Flag to install EFI System Partition GUID on handle.
+  @param[in]  PartitionName     Name of the partition if it was read from GPT
 
   @retval EFI_SUCCESS       A child handle was added.
   @retval other             A child handle was not added.
@@ -1114,7 +1115,8 @@ PartitionInstallChildHandle (
   IN  EFI_LBA                      Start,
   IN  EFI_LBA                      End,
   IN  UINT32                       BlockSize,
-  IN  BOOLEAN                      InstallEspGuid
+  IN  BOOLEAN                      InstallEspGuid,
+  IN  CHAR16                       *PartitionName
   )
 {
   EFI_STATUS              Status;
@@ -1196,6 +1198,11 @@ PartitionInstallChildHandle (
     }
   }
 
+  Private->PartitionName.Name[0] = 0;
+  if (PartitionName != NULL) {
+    CopyMem(Private->PartitionName.Name, PartitionName, sizeof(Private->PartitionName.Name));
+  }
+
   Private->DevicePath     = AppendDevicePathNode (ParentDevicePath, DevicePathNode);
 
   if (Private->DevicePath == NULL) {
@@ -1225,6 +1232,8 @@ PartitionInstallChildHandle (
                     &Private->BlockIo,
                     &gEfiBlockIo2ProtocolGuid,
                     &Private->BlockIo2,
+                    &gEfiPartitionNameProtocolGuid,
+                    &Private->PartitionName,
                     Private->EspGuid,
                     NULL,
                     NULL
@@ -1236,6 +1245,8 @@ PartitionInstallChildHandle (
                     Private->DevicePath,
                     &gEfiBlockIoProtocolGuid,
                     &Private->BlockIo,
+                    &gEfiPartitionNameProtocolGuid,
+                    &Private->PartitionName,
                     Private->EspGuid,
                     NULL,
                     NULL

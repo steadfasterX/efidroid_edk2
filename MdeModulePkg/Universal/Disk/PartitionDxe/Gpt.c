@@ -410,7 +410,8 @@ PartitionInstallGptChildHandles (
                Entry->StartingLBA,
                Entry->EndingLBA,
                BlockSize,
-               CompareGuid(&Entry->PartitionTypeGUID, &gEfiPartTypeSystemPartGuid)
+               CompareGuid(&Entry->PartitionTypeGUID, &gEfiPartTypeSystemPartGuid),
+               Entry->PartitionName
                );
   }
 
