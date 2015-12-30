@@ -304,6 +304,14 @@ double  fabs(double Arg);
 **/
 double  floor(double);
 
+/** Compute the largest integer value not greater than Arg.
+
+    @param[in]    Arg   The value to compute the floor of.
+
+    @return   The largest integer value not greater than Arg, expressed as a floating-point number.
+**/
+float  floorf(float);
+
 /** Compute the floating-point remainder of A1 / A2.
 
     @param[in]    A1    The dividend.

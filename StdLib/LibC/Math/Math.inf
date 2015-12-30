@@ -64,6 +64,7 @@
   s_fabs.c
   s_ceil.c
   s_floor.c
+  s_floorf.c
   s_trunc.c
 
   # wrapper functions
