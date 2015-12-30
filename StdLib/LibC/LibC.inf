@@ -86,7 +86,9 @@
 
 [Sources.ARM]
   Main/Arm/fixunsdfsi.c
+  Main/Arm/fixunssfsi.c
   Main/Arm/floatunsidf.c
+  Main/Arm/floatunsisf.c
   Main/Arm/flt_rounds.c
 
 [Sources.AARCH64]
