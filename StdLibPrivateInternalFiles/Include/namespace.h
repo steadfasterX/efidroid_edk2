@@ -42,7 +42,6 @@
 #define ftello        _ftello
 #define getcontext    _getcontext
 #define getenv_r      _getenv_r
-#define strtof        _strtof
 #define strtoimax     _strtoimax
 #define strtold       _strtold
 #define strtoll       _strtoll
@@ -70,6 +69,7 @@
 #define strerror_r    _strerror_r
 #define strlcat       _strlcat
 #define strlcpy       _strlcpy
+#define strtof        _strtof
 #define sys_errlist   _sys_errlist
 #define sys_nerr      _sys_nerr
 #define sys_siglist   _sys_siglist
