@@ -85,6 +85,13 @@ extern const union __long_double_u  __infinityl;
 #else
   #define isnan(__x)  __fpmacro_unary_floating(isnan, __x)
 #endif
+
+/* C99 7.12.2.3 int isinfinite(real-floating x) */
+#ifdef __isfinite
+  #define isfinite(__x)  __isfinite(__x)
+#else
+  #define isfinite(__x)  __fpmacro_unary_floating(isfinite, __x)
+#endif
 /*@)*/
 
 /*#############################################################
@@ -332,6 +339,8 @@ double  scalbn(double, int);
  */
 int __fpclassifyf(float);
 int __fpclassifyd(double);
+int __isfinitef(float);
+int __isfinited(double);
 int __isinff(float);
 int __isinfd(double);
 int __isnanf(float);
@@ -339,6 +348,7 @@ int __isnand(double);
 
 #ifdef __HAVE_LONG_DOUBLE
   int __fpclassifyl(long double);
+  int __isfinitel(long double);
   int __isinfl(long double);
   int __isnanl(long double);
 #endif  /* __HAVE_LONG_DOUBLE */
