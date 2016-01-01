@@ -63,6 +63,7 @@
   s_modf.c
   s_fabs.c
   s_ceil.c
+  s_ceilf.c
   s_floor.c
   s_floorf.c
   s_trunc.c
