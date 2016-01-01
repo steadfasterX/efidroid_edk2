@@ -79,6 +79,8 @@
   w_sqrt.c
   w_fmod.c
 
+  sincos.c
+
 [Packages]
   StdLib/StdLib.dec
   StdLibPrivateInternalFiles/DoNotUse.dec
