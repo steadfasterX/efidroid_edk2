@@ -461,8 +461,10 @@ class BuildFlagsReport(object):
         #
         for Source in M.SourceFileList:
             Ext = os.path.splitext(Source.File)[1].lower()
-            if Ext in [".c", ".cc", ".cpp"]:
+            if Ext in [".c"]:
                 BuildOptions["CC"] = 1
+            if Ext in [".cc", ".cpp"]:
+                BuildOptions["CXX"] = 1
             elif Ext in [".s", ".asm"]:
                 BuildOptions["PP"] = 1
                 BuildOptions["ASM"] = 1

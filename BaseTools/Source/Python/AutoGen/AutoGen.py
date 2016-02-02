@@ -3010,7 +3010,7 @@ class ModuleAutoGen(AutoGen):
                 return self._BuildOptionIncPathList
             
             BuildOptionIncPathList = []
-            for Tool in ('CC', 'PP', 'VFRPP', 'ASLPP', 'ASLCC', 'APP', 'ASM'):
+            for Tool in ('CC', 'CXX', 'PP', 'VFRPP', 'ASLPP', 'ASLCC', 'APP', 'ASM'):
                 Attr = 'FLAGS'
                 try:
                     FlagOption = self.BuildOption[Tool][Attr]

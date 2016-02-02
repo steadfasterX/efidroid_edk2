@@ -74,6 +74,7 @@ gComponentType2ModuleType = {
 gNmakeFlagPattern = re.compile("(?:EBC_)?([A-Z]+)_(?:STD_|PROJ_|ARCH_)?FLAGS(?:_DLL|_ASL|_EXE)?", re.UNICODE)
 gNmakeFlagName2ToolCode = {
     "C"         :   "CC",
+    "CXX"       :   "CXX",
     "LIB"       :   "SLINK",
     "LINK"      :   "DLINK",
 }
