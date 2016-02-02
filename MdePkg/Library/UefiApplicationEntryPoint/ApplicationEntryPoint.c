@@ -18,6 +18,25 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include <Library/DebugLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 
+__attribute__ ((visibility ("hidden")))
+__attribute__ ((section (".data")))
+void *__dso_handle = &__dso_handle;
+
+// Make this a weak symbol to avoid a multiple definition error when linking with libstdc++-v3.
+int __attribute__((weak))
+__aeabi_atexit(void *object, void (*destructor) (void *), void *dso_handle) {
+    return 0;
+}
+
+__attribute__((__weak__, __visibility__("hidden")))
+ extern void (*const __preinit_array_start[])(void), (*const __preinit_array_end[])(void);
+
+__attribute__((__weak__, __visibility__("hidden")))
+ extern void (*const __init_array_start[])(void), (*const __init_array_end[])(void);
+
+__attribute__((__weak__, __visibility__("hidden")))
+ extern void (*const __fini_array_start[])(void), (*const __fini_array_end[])(void);
+
 
 /**
   Entry point to UEFI Application.
@@ -44,6 +63,7 @@ _ModuleEntryPoint (
   )
 {
   EFI_STATUS                 Status;
+  VOID                       (*CONST *f)(VOID);
 
   if (_gUefiDriverRevision != 0) {
     //
@@ -53,6 +73,18 @@ _ModuleEntryPoint (
       return EFI_INCOMPATIBLE_VERSION;
     }
   }
+
+  //
+  // Call __preinit_array constructors
+  //
+  for (f=__preinit_array_start; f<__preinit_array_end; f++)
+    (*f)();
+
+  //
+  // Call __init_array constructors
+  //
+  for (f=__init_array_start; f<__init_array_end; f++)
+    (*f)();
 
   //
   // Call constructor for all libraries.
@@ -68,6 +100,12 @@ _ModuleEntryPoint (
   // Process destructor for all libraries.
   //
   ProcessLibraryDestructorList (ImageHandle, SystemTable);
+
+  //
+  // Call __fini_array constructors
+  //
+  for (f=__fini_array_start; f<__fini_array_end; f++)
+    (*f)();
 
   //
   // Return the return status code from the driver entry point

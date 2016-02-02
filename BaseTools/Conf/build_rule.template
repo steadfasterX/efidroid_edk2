@@ -117,9 +117,6 @@
         ?.C
         ?.cc
         ?.CC
-        ?.cpp
-        ?.Cpp
-        ?.CPP
 
     <ExtraDependency>
         $(MAKE_FILE)
@@ -141,11 +138,6 @@
     <InputFile>
         ?.c
         ?.C
-        ?.cc
-        ?.CC
-        ?.cpp
-        ?.Cpp
-        ?.CPP
 
     <ExtraDependency>
         $(MAKE_FILE)
@@ -160,6 +152,66 @@
         # For RVCTCYGWIN CC_FLAGS must be first to work around pathing issues
         "$(CC)" $(CC_FLAGS) -o ${dst} $(INC) ${src}
         "$(SYMRENAME)" $(SYMRENAME_FLAGS) ${dst}
+
+[CXX-Code-File]
+    <InputFile>
+        ?.cc
+        ?.CC
+        ?.cpp
+        ?.Cpp
+        ?.CPP
+
+    <ExtraDependency>
+        $(MAKE_FILE)
+
+    <OutputFile>
+        $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.obj
+
+    <Command.MSFT, Command.INTEL>
+        "$(CXX)" /Fo${dst} $(CXX_FLAGS) $(INC) ${src}
+
+    <Command.GCC, Command.RVCT>
+        # For RVCTCYGWIN CC_FLAGS must be first to work around pathing issues
+        "$(CXX)" $(CXX_FLAGS) -o ${dst} $(INC) ${src}
+
+    <Command.XCODE>
+        "$(CXX)" $(CXX_FLAGS) -o ${dst} $(INC) ${src}
+
+[CXX-Code-File.COMMON.IPF]
+    <InputFile>
+        ?.cc
+        ?.CC
+        ?.cpp
+        ?.Cpp
+        ?.CPP
+
+    <ExtraDependency>
+        $(MAKE_FILE)
+
+    <OutputFile>
+        $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.obj
+
+    <Command.MSFT, Command.INTEL>
+        "$(CXX)" /Fo${dst} $(CXX_FLAGS) $(INC) ${src}
+
+    <Command.GCC, Command.RVCT>
+        # For RVCTCYGWIN CC_FLAGS must be first to work around pathing issues
+        "$(CXX)" $(CXX_FLAGS) -o ${dst} $(INC) ${src}
+        "$(SYMRENAME)" $(SYMRENAME_FLAGS) ${dst}
+
+[CXX-Code-File.BASE.AARCH64,CXX-Code-File.SEC.AARCH64,CXX-Code-File.PEI_CORE.AARCH64,CXX-Code-File.PEIM.AARCH64]
+    <InputFile>
+        ?.cpp
+
+    <ExtraDependency>
+        $(MAKE_FILE)
+
+    <OutputFile>
+        $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.obj
+
+    <Command.GCC>
+        "$(CXX)" $(CXX_FLAGS) $(CXX_XIPFLAGS) -o ${dst} $(INC) ${src}
+
 
 [C-Code-File.BASE.AARCH64,C-Code-File.SEC.AARCH64,C-Code-File.PEI_CORE.AARCH64,C-Code-File.PEIM.AARCH64]
     <InputFile>

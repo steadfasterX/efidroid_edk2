@@ -4319,11 +4319,13 @@ NOOPT_DDK3790xASL_IPF_DLINK_FLAGS    = /NOLOGO /NODEFAULTLIB /LTCG /DLL /OPT:REF
 DEBUG_*_*_OBJCOPY_ADDDEBUGFLAG     = --add-gnu-debuglink=$(DEBUG_DIR)/$(MODULE_NAME).debug
 RELEASE_*_*_OBJCOPY_ADDDEBUGFLAG   =
 
-DEFINE GCC_ALL_CC_FLAGS            = -g -Os -fshort-wchar -fno-strict-aliasing -Wall -Werror -Wno-array-bounds -c -include AutoGen.h -fno-common
+DEFINE GCC_ALL_CC_FLAGS            = -g -Os -fshort-wchar -fno-strict-aliasing -Wall -Werror -Wno-array-bounds -c -include AutoGen.h -fno-common -fomit-frame-pointer -fno-exceptions
+DEFINE GCC_ALL_CXX_FLAGS           = DEF(GCC_ALL_CC_FLAGS) -fno-rtti
 DEFINE GCC_IA32_CC_FLAGS           = DEF(GCC_ALL_CC_FLAGS) -m32 -malign-double -freorder-blocks -freorder-blocks-and-partition -O2 -mno-stack-arg-probe
 DEFINE GCC_X64_CC_FLAGS            = DEF(GCC_ALL_CC_FLAGS) -mno-red-zone -Wno-address -mno-stack-arg-probe
 DEFINE GCC_IPF_CC_FLAGS            = DEF(GCC_ALL_CC_FLAGS) -minline-int-divide-min-latency
 DEFINE GCC_ARM_CC_FLAGS            = DEF(GCC_ALL_CC_FLAGS) -mlittle-endian -mabi=aapcs -fno-short-enums -save-temps -funsigned-char -ffunction-sections -fdata-sections -fomit-frame-pointer -Wno-address -mthumb -mfloat-abi=soft
+DEFINE GCC_ARM_CXX_FLAGS           = DEF(GCC_ALL_CXX_FLAGS) -mlittle-endian -mabi=aapcs -fno-short-enums -save-temps -funsigned-char -ffunction-sections -fdata-sections -fomit-frame-pointer -Wno-address -mthumb -mfloat-abi=soft
 DEFINE GCC_AARCH64_CC_FLAGS        = DEF(GCC_ALL_CC_FLAGS) -mlittle-endian -fno-short-enums -save-temps -fverbose-asm -funsigned-char  -ffunction-sections -fdata-sections -fomit-frame-pointer -fno-builtin -Wno-address -fno-asynchronous-unwind-tables
 DEFINE GCC_AARCH64_CC_XIPFLAGS     = -mstrict-align
 DEFINE GCC_DLINK_FLAGS_COMMON      = -nostdlib --pie
@@ -4352,6 +4354,7 @@ DEFINE GCC_ARM_RC_FLAGS            = -I binary -O elf32-littlearm     -B arm    
 DEFINE GCC_AARCH64_RC_FLAGS        = -I binary -O elf64-littleaarch64 -B aarch64 --rename-section .data=.hii
 
 DEFINE GCC44_ALL_CC_FLAGS            = -g -fshort-wchar -fno-strict-aliasing -Wall -Werror -Wno-array-bounds -ffunction-sections -fdata-sections -c -include AutoGen.h -fno-common -DSTRING_ARRAY_NAME=$(BASE_NAME)Strings
+DEFINE GCC44_ALL_CXX_FLAGS           = -g -fshort-wchar -fno-strict-aliasing -Wall -Werror -Wno-array-bounds -ffunction-sections -fdata-sections -c -include AutoGen.h -fno-common -DSTRING_ARRAY_NAME=$(BASE_NAME)Strings
 DEFINE GCC44_IA32_CC_FLAGS           = DEF(GCC44_ALL_CC_FLAGS) -m32 -march=i586 -malign-double -fno-stack-protector -D EFI32 -fno-asynchronous-unwind-tables
 DEFINE GCC44_X64_CC_FLAGS            = DEF(GCC44_ALL_CC_FLAGS) -m64 -fno-stack-protector "-DEFIAPI=__attribute__((ms_abi))" -DNO_BUILTIN_VA_FUNCS -mno-red-zone -Wno-address -mcmodel=large -fno-asynchronous-unwind-tables
 DEFINE GCC44_IA32_X64_DLINK_COMMON   = -nostdlib -n -q --gc-sections -z common-page-size=0x20
@@ -4383,6 +4386,7 @@ DEFINE GCC46_X64_DLINK2_FLAGS        = DEF(GCC45_X64_DLINK2_FLAGS)
 DEFINE GCC46_ASM_FLAGS               = DEF(GCC45_ASM_FLAGS)
 DEFINE GCC46_ARM_ASM_FLAGS           = $(ARCHASM_FLAGS) $(PLATFORM_FLAGS) DEF(GCC_ASM_FLAGS) -mlittle-endian
 DEFINE GCC46_ARM_CC_FLAGS            = $(ARCHCC_FLAGS) $(PLATFORM_FLAGS) DEF(GCC44_ALL_CC_FLAGS) DEF(GCC_ARM_CC_FLAGS) -fstack-protector -mword-relocations
+DEFINE GCC46_ARM_CXX_FLAGS           = $(ARCHCC_FLAGS) $(PLATFORM_FLAGS) DEF(GCC44_ALL_CXX_FLAGS) DEF(GCC_ARM_CXX_FLAGS) -fstack-protector -mword-relocations
 DEFINE GCC46_ARM_DLINK_FLAGS         = DEF(GCC_ARM_DLINK_FLAGS) --oformat=elf32-littlearm
 DEFINE GCC46_ARM_DLINK2_FLAGS        = DEF(GCC_DLINK2_FLAGS_COMMON) --defsym=PECOFF_HEADER_SIZE=0x220
 DEFINE GCC46_ARM_ASLDLINK_FLAGS      = DEF(GCC_ARM_ASLDLINK_FLAGS) --oformat=elf32-littlearm
@@ -4399,6 +4403,7 @@ DEFINE GCC47_ASM_FLAGS               = DEF(GCC46_ASM_FLAGS)
 DEFINE GCC47_ARM_ASM_FLAGS           = DEF(GCC46_ARM_ASM_FLAGS)
 DEFINE GCC47_AARCH64_ASM_FLAGS       = $(ARCHASM_FLAGS) $(PLATFORM_FLAGS) DEF(GCC_ASM_FLAGS) -mlittle-endian
 DEFINE GCC47_ARM_CC_FLAGS            = DEF(GCC46_ARM_CC_FLAGS) -mno-unaligned-access
+DEFINE GCC47_ARM_CXX_FLAGS           = DEF(GCC46_ARM_CXX_FLAGS) -mno-unaligned-access
 DEFINE GCC47_AARCH64_CC_FLAGS        = $(ARCHCC_FLAGS) $(PLATFORM_FLAGS) DEF(GCC44_ALL_CC_FLAGS) -mcmodel=large DEF(GCC_AARCH64_CC_FLAGS)
 DEFINE GCC47_AARCH64_CC_XIPFLAGS     = DEF(GCC_AARCH64_CC_XIPFLAGS)
 DEFINE GCC47_ARM_DLINK_FLAGS         = DEF(GCC46_ARM_DLINK_FLAGS)
@@ -4420,6 +4425,7 @@ DEFINE GCC48_ASM_FLAGS               = DEF(GCC47_ASM_FLAGS)
 DEFINE GCC48_ARM_ASM_FLAGS           = DEF(GCC47_ARM_ASM_FLAGS)
 DEFINE GCC48_AARCH64_ASM_FLAGS       = DEF(GCC47_AARCH64_ASM_FLAGS)
 DEFINE GCC48_ARM_CC_FLAGS            = DEF(GCC47_ARM_CC_FLAGS)
+DEFINE GCC48_ARM_CXX_FLAGS           = DEF(GCC47_ARM_CXX_FLAGS)
 DEFINE GCC48_AARCH64_CC_FLAGS        = DEF(GCC47_AARCH64_CC_FLAGS)
 DEFINE GCC48_AARCH64_CC_XIPFLAGS     = DEF(GCC47_AARCH64_CC_XIPFLAGS)
 DEFINE GCC48_ARM_DLINK_FLAGS         = DEF(GCC47_ARM_DLINK_FLAGS)
@@ -4441,6 +4447,7 @@ DEFINE GCC49_ASM_FLAGS               = DEF(GCC48_ASM_FLAGS)
 DEFINE GCC49_ARM_ASM_FLAGS           = DEF(GCC48_ARM_ASM_FLAGS)
 DEFINE GCC49_AARCH64_ASM_FLAGS       = DEF(GCC48_AARCH64_ASM_FLAGS)
 DEFINE GCC49_ARM_CC_FLAGS            = DEF(GCC48_ARM_CC_FLAGS)
+DEFINE GCC49_ARM_CXX_FLAGS           = DEF(GCC48_ARM_CXX_FLAGS)
 DEFINE GCC49_AARCH64_CC_FLAGS        = $(ARCHCC_FLAGS) $(PLATFORM_FLAGS) DEF(GCC44_ALL_CC_FLAGS) DEF(GCC_AARCH64_CC_FLAGS)
 DEFINE GCC49_AARCH64_CC_XIPFLAGS     = DEF(GCC48_AARCH64_CC_XIPFLAGS)
 DEFINE GCC49_ARM_DLINK_FLAGS         = DEF(GCC48_ARM_DLINK_FLAGS)
@@ -4782,6 +4789,8 @@ RELEASE_GCC46_X64_CC_FLAGS       = DEF(GCC46_X64_CC_FLAGS) -Wno-unused-but-set-v
 
   DEBUG_GCC46_ARM_CC_FLAGS       = DEF(GCC46_ARM_CC_FLAGS) -D__ARM_FEATURE_UNALIGNED=0 -O0
 RELEASE_GCC46_ARM_CC_FLAGS       = DEF(GCC46_ARM_CC_FLAGS) -D__ARM_FEATURE_UNALIGNED=0 -Wno-unused-but-set-variable
+  DEBUG_GCC46_ARM_CXX_FLAGS      = DEF(GCC46_ARM_CXX_FLAGS) -D__ARM_FEATURE_UNALIGNED=0 -O0
+RELEASE_GCC46_ARM_CXX_FLAGS      = DEF(GCC46_ARM_CXX_FLAGS) -D__ARM_FEATURE_UNALIGNED=0 -Wno-unused-but-set-variable
 
 ####################################################################################
 #
@@ -4886,6 +4895,8 @@ RELEASE_GCC47_X64_CC_FLAGS       = DEF(GCC47_X64_CC_FLAGS) -Wno-unused-but-set-v
 
   DEBUG_GCC47_ARM_CC_FLAGS       = DEF(GCC47_ARM_CC_FLAGS) -O0
 RELEASE_GCC47_ARM_CC_FLAGS       = DEF(GCC47_ARM_CC_FLAGS) -Wno-unused-but-set-variable
+  DEBUG_GCC47_ARM_CXX_FLAGS      = DEF(GCC47_ARM_CXX_FLAGS) -O0
+RELEASE_GCC47_ARM_CXX_FLAGS      = DEF(GCC47_ARM_CXX_FLAGS) -Wno-unused-but-set-variable
 
 ##################
 # GCC47 AARCH64 definitions
@@ -5018,6 +5029,8 @@ RELEASE_GCC48_X64_CC_FLAGS       = DEF(GCC48_X64_CC_FLAGS) -Wno-unused-but-set-v
 
   DEBUG_GCC48_ARM_CC_FLAGS       = DEF(GCC48_ARM_CC_FLAGS) -O0
 RELEASE_GCC48_ARM_CC_FLAGS       = DEF(GCC48_ARM_CC_FLAGS) -Wno-unused-but-set-variable
+  DEBUG_GCC48_ARM_CXX_FLAGS      = DEF(GCC48_ARM_CXX_FLAGS) -O0
+RELEASE_GCC48_ARM_CXX_FLAGS      = DEF(GCC48_ARM_CXX_FLAGS) -Wno-unused-but-set-variable
 
 ##################
 # GCC48 AARCH64 definitions
@@ -5124,6 +5137,7 @@ RELEASE_GCC49_X64_CC_FLAGS       = DEF(GCC49_X64_CC_FLAGS) -Wno-unused-but-set-v
 ##################
 # GCC49 ARM definitions
 ##################
+*_GCC49_ARM_CXX_PATH             = ENV(GCC49_ARM_PREFIX)g++
 *_GCC49_ARM_CC_PATH              = ENV(GCC49_ARM_PREFIX)gcc
 *_GCC49_ARM_SLINK_PATH           = ENV(GCC49_ARM_PREFIX)ar
 *_GCC49_ARM_DLINK_PATH           = ENV(GCC49_ARM_PREFIX)ld
@@ -5150,6 +5164,8 @@ RELEASE_GCC49_X64_CC_FLAGS       = DEF(GCC49_X64_CC_FLAGS) -Wno-unused-but-set-v
 
   DEBUG_GCC49_ARM_CC_FLAGS       = DEF(GCC49_ARM_CC_FLAGS) -O0
 RELEASE_GCC49_ARM_CC_FLAGS       = DEF(GCC49_ARM_CC_FLAGS) -Wno-unused-but-set-variable
+  DEBUG_GCC49_ARM_CXX_FLAGS      = DEF(GCC49_ARM_CXX_FLAGS) -O0
+RELEASE_GCC49_ARM_CXX_FLAGS      = DEF(GCC49_ARM_CXX_FLAGS) -Wno-unused-but-set-variable
 
 ##################
 # GCC49 AARCH64 definitions
