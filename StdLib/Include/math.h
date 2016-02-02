@@ -286,6 +286,14 @@ double  pow(double Value, double Exp);
 **/
 double  sqrt(double Arg);
 
+/** Compute the non-negative square root of Arg.
+
+
+    @param[in]    Arg   The value to compute the square root of.
+
+    @return   The square root of Arg.  If Arg is less than zero, errno is set to EDOM.
+**/
+float	sqrtf(float Arg);
 
 /** Compute the smallest integer value not less than Arg.
 

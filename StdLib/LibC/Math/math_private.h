@@ -154,6 +154,7 @@ do {                \
 
 /* ieee style elementary functions */
 extern double __ieee754_sqrt (double);
+extern float  __ieee754_sqrtf (float);
 extern double __ieee754_acos (double);
 extern double __ieee754_acosh (double);
 extern double __ieee754_log (double);
@@ -191,7 +192,6 @@ extern int    __kernel_rem_pio2 (double*,double*,int,int,int,const int*);
 
 
 ///* ieee style elementary float functions */
-//extern float __ieee754_sqrtf __P((float));
 //extern float __ieee754_acosf __P((float));
 //extern float __ieee754_acoshf __P((float));
 //extern float __ieee754_logf __P((float));

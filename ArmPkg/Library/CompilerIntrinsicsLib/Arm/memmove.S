@@ -14,7 +14,6 @@
 
   .text
   .align 2
-  GCC_ASM_EXPORT (memmove)
 
 # VOID
 # EFIAPI

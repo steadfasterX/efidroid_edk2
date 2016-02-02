@@ -38,6 +38,7 @@
   e_log10.c
   e_pow.c
   e_sqrt.c
+  e_sqrtf.c
   e_fmod.c
   e_rem_pio2.c
 
@@ -80,6 +81,7 @@
   w_log10.c
   w_pow.c
   w_sqrt.c
+  w_sqrtf.c
   w_fmod.c
 
   sincos.c
