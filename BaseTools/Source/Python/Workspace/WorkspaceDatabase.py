@@ -1735,6 +1735,7 @@ class InfBuildData(ModuleBuildClassObject):
     # dict used to convert old tool name used in [nmake] section to new ones
     _TOOL_CODE_ = {
         "C"         :   "CC",
+        "CXX"       :   "CXX",
         "LIB"       :   "SLINK",
         "LINK"      :   "DLINK",
     }

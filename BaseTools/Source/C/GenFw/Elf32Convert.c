@@ -849,6 +849,7 @@ WriteSections32 (
             break;
 
           case R_ARM_ABS32:
+          case R_ARM_TARGET1:
           case R_ARM_RABS32:
             //
             // Absolute relocation.
@@ -981,6 +982,7 @@ WriteRelocations32 (
               break;
 
             case R_ARM_ABS32:
+            case R_ARM_TARGET1:
             case R_ARM_RABS32:
               CoffAddFixup (
                 mCoffSectionsOffset[RelShdr->sh_info]

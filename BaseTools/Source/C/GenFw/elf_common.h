@@ -736,6 +736,7 @@ typedef struct {
 // Block of PC-relative relocations added to work around gcc putting
 // object relocations in static executables.
 #define R_ARM_THM_JUMP24        30  
+#define R_ARM_TARGET1           38
 #define R_ARM_PREL31            42  
 #define R_ARM_MOVW_PREL_NC      45  
 #define R_ARM_MOVT_PREL         46
