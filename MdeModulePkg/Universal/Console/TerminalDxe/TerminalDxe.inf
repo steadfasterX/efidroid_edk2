@@ -97,3 +97,6 @@
 
 [UserExtensions.TianoCore."ExtraFiles"]
   TerminalDxeExtra.uni
+
+[Depex]
+  gEfiGraphicsOutputProtocolGuid
