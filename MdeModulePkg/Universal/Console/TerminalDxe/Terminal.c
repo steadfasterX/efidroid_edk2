@@ -442,6 +442,8 @@ InitializeTerminalConsoleTextMode (
   TERMINAL_CONSOLE_MODE_DATA  *NewModeBuffer;
   UINTN                       ValidCount;
   UINTN                       ValidIndex;
+  EFI_STATUS                  Status;
+  EFI_GRAPHICS_OUTPUT_PROTOCOL *GraphicsOutput;
   
   if ((TextModeCount == NULL) || (TextModeData == NULL)) {
     return EFI_INVALID_PARAMETER;
@@ -453,6 +455,45 @@ InitializeTerminalConsoleTextMode (
   // Get defined mode buffer pointer.
   //
   ModeBuffer = mTerminalConsoleModeData;
+
+  // get graphics protocol
+  Status = gBS->LocateProtocol (&gEfiGraphicsOutputProtocolGuid, NULL, (VOID **) &GraphicsOutput);
+  if (!EFI_ERROR (Status)) {
+    UINTN                                MaxMode;
+    UINT32                               ModeIndex;
+    UINTN                                SizeOfInfo;
+    EFI_GRAPHICS_OUTPUT_MODE_INFORMATION *Info;
+
+    // get max mode
+    MaxMode = GraphicsOutput->Mode->MaxMode;
+
+    // allocate mode buffer
+    ModeBuffer = AllocateZeroPool(Count*MaxMode * sizeof (TERMINAL_CONSOLE_MODE_DATA));
+    ASSERT(ModeBuffer);
+
+    // copy static modes
+    CopyMem(ModeBuffer, mTerminalConsoleModeData, Count*sizeof (TERMINAL_CONSOLE_MODE_DATA));
+
+    // add GOP modes
+    for (ModeIndex = 0; ModeIndex < MaxMode; ModeIndex++) {
+      Status = GraphicsOutput->QueryMode (
+                         GraphicsOutput,
+                         ModeIndex,
+                         &SizeOfInfo,
+                         &Info
+                         );
+      if (!EFI_ERROR (Status)) {
+        ModeBuffer[Count].Columns = Info->HorizontalResolution/EFI_GLYPH_WIDTH;
+        ModeBuffer[Count].Rows = Info->VerticalResolution/EFI_GLYPH_HEIGHT;
+        Count++;
+
+        FreePool (Info);
+      }
+    }
+  }
+  else {
+    Count-=2;
+  }
     
   //
   // Here we make sure that the final mode exposed does not include the duplicated modes,
