@@ -52,7 +52,7 @@ __BEGIN_DECLS
                   the application was launched from.
 **/
 extern void
-__assert(const char *file, const char *func, int line, const char *failedexpr);
+__assert(const char *file, const char *func, int line, const char *failedexpr) __noreturn;
 
 __END_DECLS
 
