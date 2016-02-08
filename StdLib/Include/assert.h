@@ -50,7 +50,7 @@
                   the application was launched from.
 **/
 extern void
-__assert(const char *file, const char *func, int line, const char *failedexpr);
+__assert(const char *file, const char *func, int line, const char *failedexpr) __noreturn;
 
 /** The assert macro puts diagnostic tests into programs; it expands to a
     void expression.
