@@ -3294,6 +3294,72 @@ BdsLibEnumerateAllBootOption (
         MiscNumber++;
         break;
       }
+
+      CHAR16* BlockDeviceName = AllocateCopyPool (StrSize(Buffer), Buffer);
+      if (BlockDeviceName == NULL) {
+        continue;
+      }
+
+      //
+      // If there is simple file protocol which does not consume block Io protocol, create a boot option for it here.
+      //
+      NonBlockNumber = 0;
+      gBS->LocateHandleBuffer (
+            ByProtocol,
+            &gEfiSimpleFileSystemProtocolGuid,
+            NULL,
+            &NumberFileSystemHandles,
+            &FileSystemHandles
+            );
+      for (Index = 0; Index < NumberFileSystemHandles; Index++) {
+        //
+        // Do the removable Media thing. \EFI\BOOT\boot{machinename}.EFI
+        //  machinename is ia32, ia64, x64, ...
+        //
+        Hdr.Union  = &HdrData;
+        NeedDelete = TRUE;
+        Status     = BdsLibGetImageHeader (
+                       FileSystemHandles[Index],
+                       EFI_REMOVABLE_MEDIA_FILE_NAME,
+                       &DosHeader,
+                       Hdr
+                       );
+        if (!EFI_ERROR (Status) &&
+            EFI_IMAGE_MACHINE_TYPE_SUPPORTED (Hdr.Pe32->FileHeader.Machine) &&
+            Hdr.Pe32->OptionalHeader.Subsystem == EFI_IMAGE_SUBSYSTEM_EFI_APPLICATION) {
+          NeedDelete = FALSE;
+        }
+
+        if (NeedDelete) {
+          //
+          // No such file or the file is not a EFI application, delete this boot option
+          //
+          BdsLibDeleteOptionFromHandle (FileSystemHandles[Index]);
+        } else {
+          EFI_PARTITION_NAME_PROTOCOL  *PartitionName;
+
+          PartitionName = NULL;
+          Status = gBS->HandleProtocol (
+                          FileSystemHandles[Index],
+                          &gEfiPartitionNameProtocolGuid,
+                          (VOID **)&PartitionName
+                          );
+          if (!EFI_ERROR (Status) && PartitionName->Name && PartitionName->Name[0]) {
+            UnicodeSPrint (Buffer, sizeof (Buffer), L"%s (%s)", BlockDeviceName, PartitionName->Name);
+          } else {
+            UnicodeSPrint (Buffer, sizeof (Buffer), L"%s (%d)", BlockDeviceName, NonBlockNumber+1);
+          }
+
+          BdsLibBuildOptionFromHandle (FileSystemHandles[Index], BdsBootOptionList, Buffer);
+          NonBlockNumber++;
+        }
+      }
+
+      FreePool (BlockDeviceName);
+
+      if (NumberFileSystemHandles != 0) {
+        FreePool (FileSystemHandles);
+      }
     }
   }
 
