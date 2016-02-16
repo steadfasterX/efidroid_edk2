@@ -444,6 +444,10 @@ InitializeTerminalConsoleTextMode (
   UINTN                       ValidIndex;
   EFI_STATUS                  Status;
   EFI_GRAPHICS_OUTPUT_PROTOCOL *GraphicsOutput;
+  UINTN                       Mode0Columns = 0;
+  UINTN                       Mode0Rows    = 0;
+  UINTN                       Mode1Columns = 0;
+  UINTN                       Mode1Rows    = 0;
   
   if ((TextModeCount == NULL) || (TextModeData == NULL)) {
     return EFI_INVALID_PARAMETER;
@@ -485,6 +489,16 @@ InitializeTerminalConsoleTextMode (
       if (!EFI_ERROR (Status)) {
         ModeBuffer[Count].Columns = Info->HorizontalResolution/EFI_GLYPH_WIDTH;
         ModeBuffer[Count].Rows = Info->VerticalResolution/EFI_GLYPH_HEIGHT;
+
+        if (ModeIndex == 0) {
+          Mode0Columns = ModeBuffer[Count].Columns;
+          Mode0Rows    = ModeBuffer[Count].Rows;
+        }
+        else if (ModeIndex == 1) {
+          Mode1Columns = ModeBuffer[Count].Columns;
+          Mode1Rows    = ModeBuffer[Count].Rows;
+        }
+
         Count++;
 
         FreePool (Info);
@@ -493,6 +507,16 @@ InitializeTerminalConsoleTextMode (
   }
   else {
     Count-=2;
+  }
+
+  if (Mode0Columns>=80 && Mode0Rows>=25) {
+    Mode0Columns = 0;
+    Mode0Rows    = 0;
+  }
+
+  if (Mode1Columns>=80 && Mode1Rows>=50) {
+    Mode1Columns = 0;
+    Mode1Rows    = 0;
   }
     
   //
@@ -510,10 +534,18 @@ InitializeTerminalConsoleTextMode (
 
   NewModeBuffer[ValidCount].Columns = 80;
   NewModeBuffer[ValidCount].Rows    = 25;
+  if (Mode0Columns && Mode0Rows) {
+    NewModeBuffer[ValidCount].Columns = Mode0Columns;
+    NewModeBuffer[ValidCount].Rows    = Mode0Rows;
+  }
   ValidCount++;
 
   NewModeBuffer[ValidCount].Columns = 80;
   NewModeBuffer[ValidCount].Rows    = 50;
+  if (Mode1Columns && Mode1Rows) {
+    NewModeBuffer[ValidCount].Columns = Mode1Columns;
+    NewModeBuffer[ValidCount].Rows    = Mode1Rows;
+  }
   ValidCount++;
   
   //
