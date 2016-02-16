@@ -35,6 +35,10 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 // default not connect
 //
 BOOLEAN  mConInIsConnect = FALSE;
+UINTN    mMode0Columns   = 0;
+UINTN    mMode0Rows      = 0;
+UINTN    mMode1Columns   = 0;
+UINTN    mMode1Rows      = 0;
 
 //
 // Text In Splitter Private Data template
@@ -323,6 +327,54 @@ ConSplitterDriverEntry(
   )
 {
   EFI_STATUS              Status;
+  EFI_GRAPHICS_OUTPUT_PROTOCOL *GraphicsOutput;
+
+  // get graphics protocol
+  Status = gBS->LocateProtocol (&gEfiGraphicsOutputProtocolGuid, NULL, (VOID **) &GraphicsOutput);
+  if (!EFI_ERROR (Status)) {
+    UINTN                                MaxMode;
+    UINT32                               ModeIndex;
+    UINTN                                SizeOfInfo;
+    EFI_GRAPHICS_OUTPUT_MODE_INFORMATION *Info;
+
+    // get max mode
+    MaxMode = GraphicsOutput->Mode->MaxMode;
+
+    // add GOP modes
+    for (ModeIndex = 0; ModeIndex < MaxMode; ModeIndex++) {
+      Status = GraphicsOutput->QueryMode (
+                         GraphicsOutput,
+                         ModeIndex,
+                         &SizeOfInfo,
+                         &Info
+                         );
+      UINTN Columns = Info->HorizontalResolution/EFI_GLYPH_WIDTH;
+      UINTN Rows    = Info->VerticalResolution  /EFI_GLYPH_HEIGHT;
+
+      if (!EFI_ERROR (Status)) {
+        if (ModeIndex == 0) {
+          mMode0Columns = Columns;
+          mMode0Rows    = Rows;
+        }
+        else if (ModeIndex == 1) {
+          mMode1Columns = Columns;
+          mMode1Rows    = Rows;
+        }
+
+        FreePool (Info);
+      }
+    }
+  }
+
+  if (mMode0Columns>=80 && mMode0Rows>=25) {
+    mMode0Columns = 0;
+    mMode0Rows    = 0;
+  }
+
+  if (mMode1Columns>=80 && mMode1Rows>=50) {
+    mMode1Columns = 0;
+    mMode1Rows    = 0;
+  }
 
   //
   // Install driver model protocol(s).
@@ -666,6 +718,10 @@ ConSplitterTextOutConstructor (
   //
   ConOutPrivate->TextOutQueryData[0].Columns  = 80;
   ConOutPrivate->TextOutQueryData[0].Rows     = 25;
+  if (mMode0Columns && mMode0Rows) {
+    ConOutPrivate->TextOutQueryData[0].Columns = mMode0Columns;
+    ConOutPrivate->TextOutQueryData[0].Rows    = mMode0Rows;
+  }
   TextOutSetMode (ConOutPrivate, 0);
 
 
@@ -2930,8 +2986,14 @@ ConsplitterSetConsoleOutMode (
           PreferMode          = Mode;
         }
       }
-      if (Col == 80 && Row == 25) {
-        BaseMode = Mode;
+      if (mMode0Columns && mMode0Rows) {
+        if (Col == mMode0Columns && Row == mMode0Rows) {
+          BaseMode = Mode;
+        }
+      } else {
+        if (Col == 80 && Row == 25) {
+          BaseMode = Mode;
+        }
       }
     }
   }
@@ -2947,10 +3009,17 @@ ConsplitterSetConsoleOutMode (
     Status = TextOut->SetMode (TextOut, BaseMode);
     ASSERT(!EFI_ERROR(Status));
 
-    Status = PcdSet32S (PcdConOutColumn, 80);
-    ASSERT(!EFI_ERROR(Status));
-    Status = PcdSet32S (PcdConOutRow, 25);
-    ASSERT(!EFI_ERROR(Status));
+    if (mMode0Columns && mMode0Rows) {
+      Status = PcdSet32S (PcdConOutColumn, mMode0Columns);
+      ASSERT(!EFI_ERROR(Status));
+      Status = PcdSet32S (PcdConOutRow, mMode0Rows);
+      ASSERT(!EFI_ERROR(Status));
+    } else {
+      Status = PcdSet32S (PcdConOutColumn, 80);
+      ASSERT(!EFI_ERROR(Status));
+      Status = PcdSet32S (PcdConOutRow, 25);
+      ASSERT(!EFI_ERROR(Status));
+    }
   }
 
   return ;
@@ -3239,6 +3308,10 @@ ConSplitterTextOutDeleteDevice (
     Private->TextOutMode.MaxMode          = 1;
     Private->TextOutQueryData[0].Columns  = 80;
     Private->TextOutQueryData[0].Rows     = 25;
+    if (mMode0Columns && mMode0Rows) {
+      Private->TextOutQueryData[0].Columns = mMode0Columns;
+      Private->TextOutQueryData[0].Rows    = mMode0Rows;
+    }
     TextOutSetMode (Private, 0);
 
     return EFI_SUCCESS;
