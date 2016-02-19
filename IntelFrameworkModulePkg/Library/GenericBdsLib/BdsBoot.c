@@ -3311,6 +3311,11 @@ BdsLibEnumerateAllBootOption (
             &NumberFileSystemHandles,
             &FileSystemHandles
             );
+
+      if (NumberFileSystemHandles > 0) {
+        BdsLibDeleteOptionFromHandle (BlockIoHandles[Index]);
+      }
+
       for (Index = 0; Index < NumberFileSystemHandles; Index++) {
         //
         // Do the removable Media thing. \EFI\BOOT\boot{machinename}.EFI
