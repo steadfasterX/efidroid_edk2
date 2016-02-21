@@ -3114,6 +3114,7 @@ BdsLibEnumerateAllBootOption (
   BOOLEAN                       Removable[2];
   UINTN                         RemovableIndex;
   UINTN                         Index;
+  UINTN                         Index2;
   UINTN                         NumOfLoadFileHandles;
   EFI_HANDLE                    *LoadFileHandles;
   UINTN                         FvHandleCount;
@@ -3316,7 +3317,7 @@ BdsLibEnumerateAllBootOption (
         BdsLibDeleteOptionFromHandle (BlockIoHandles[Index]);
       }
 
-      for (Index = 0; Index < NumberFileSystemHandles; Index++) {
+      for (Index2 = 0; Index2 < NumberFileSystemHandles; Index2++) {
         //
         // Do the removable Media thing. \EFI\BOOT\boot{machinename}.EFI
         //  machinename is ia32, ia64, x64, ...
@@ -3324,7 +3325,7 @@ BdsLibEnumerateAllBootOption (
         Hdr.Union  = &HdrData;
         NeedDelete = TRUE;
         Status     = BdsLibGetImageHeader (
-                       FileSystemHandles[Index],
+                       FileSystemHandles[Index2],
                        EFI_REMOVABLE_MEDIA_FILE_NAME,
                        &DosHeader,
                        Hdr
@@ -3339,13 +3340,13 @@ BdsLibEnumerateAllBootOption (
           //
           // No such file or the file is not a EFI application, delete this boot option
           //
-          BdsLibDeleteOptionFromHandle (FileSystemHandles[Index]);
+          BdsLibDeleteOptionFromHandle (FileSystemHandles[Index2]);
         } else {
           EFI_PARTITION_NAME_PROTOCOL  *PartitionName;
 
           PartitionName = NULL;
           Status = gBS->HandleProtocol (
-                          FileSystemHandles[Index],
+                          FileSystemHandles[Index2],
                           &gEfiPartitionNameProtocolGuid,
                           (VOID **)&PartitionName
                           );
@@ -3355,7 +3356,7 @@ BdsLibEnumerateAllBootOption (
             UnicodeSPrint (Buffer, sizeof (Buffer), L"%s (%d)", BlockDeviceName, NonBlockNumber+1);
           }
 
-          BdsLibBuildOptionFromHandle (FileSystemHandles[Index], BdsBootOptionList, Buffer);
+          BdsLibBuildOptionFromHandle (FileSystemHandles[Index2], BdsBootOptionList, Buffer);
           NonBlockNumber++;
         }
       }
