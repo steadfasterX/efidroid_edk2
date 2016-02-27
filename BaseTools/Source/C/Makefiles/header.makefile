@@ -50,6 +50,7 @@ ifeq ($(DARWIN),Darwin)
 CFLAGS = -MD -fshort-wchar -fno-strict-aliasing -Wall -Werror -Wno-deprecated-declarations -Wno-self-assign -nostdlib -c -g
 else
 CFLAGS = -MD -fshort-wchar -fno-strict-aliasing -Wall -Werror -Wno-deprecated-declarations -nostdlib -c -g
+CFLAGS += -fPIC
 endif
 LFLAGS =
 
