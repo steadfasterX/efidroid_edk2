@@ -50,6 +50,7 @@ ifeq ($(DARWIN),Darwin)
 BUILD_CFLAGS = -MD -fshort-wchar -fno-strict-aliasing -Wall -Werror -Wno-deprecated-declarations -Wno-self-assign -nostdlib -c -g
 else
 BUILD_CFLAGS = -MD -fshort-wchar -fno-strict-aliasing -Wall -Werror -Wno-deprecated-declarations -nostdlib -c -g
+BUILD_CFLAGS += -fPIC
 endif
 BUILD_LFLAGS =
 BUILD_CXXFLAGS =
