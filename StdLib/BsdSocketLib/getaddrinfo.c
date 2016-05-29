@@ -574,6 +574,9 @@ explore_fqdn(const struct addrinfo *pai, const char *hostname,
 	struct addrinfo *cur;
 	int error = 0;
 
+    (void)(dtab);
+    (void)(default_dns_files);
+
 	_DIAGASSERT(pai != NULL);
 	/* hostname may be NULL */
 	/* servname may be NULL */
