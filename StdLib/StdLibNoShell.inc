@@ -17,7 +17,7 @@
 ################################################################
 
 [Defines]
-  DEFINE STDLIB_NO_SHELL      = FALSE
+  DEFINE STDLIB_NO_SHELL      = TRUE
 
 ##########
 #  Socket Support Libraries
@@ -29,10 +29,11 @@
   UseSocketDxe|StdLib/UseSocketDxe/UseSocketDxe.inf
 
 [LibraryClasses.Common.UEFI_APPLICATION]
-  ShellLib|ShellPkg/Library/UefiShellLib/UefiShellLib.inf
   FileHandleLib|MdePkg/Library/UefiFileHandleLib/UefiFileHandleLib.inf
   SortLib|MdeModulePkg/Library/UefiSortLib/UefiSortLib.inf
-  ShellCEntryLib|ShellPkg/Library/UefiShellCEntryLib/UefiShellCEntryLib.inf
+
+  StdCEntryLib|StdLib/StdCEntryLib/StdCEntryLib.inf
+  StdCNoEntryLib|StdLib/StdCNoEntryLib/StdCNoEntryLib.inf
 
   #
   # C Standard Libraries
@@ -44,6 +45,7 @@
   LibSignal|StdLib/LibC/Signal/Signal.inf
   LibStdio|StdLib/LibC/Stdio/Stdio.inf
   LibStdLib|StdLib/LibC/StdLib/StdLib.inf
+  LibStdCxxLib|StdLib/LibC/StdCxxLib/StdCxxLib.inf
   LibString|StdLib/LibC/String/String.inf
   LibTime|StdLib/LibC/Time/Time.inf
   LibUefi|StdLib/LibC/Uefi/Uefi.inf
@@ -68,8 +70,6 @@
 # Applications should not directly access any functions defined in these libraries.
   LibGdtoa|StdLib/LibC/gdtoa/gdtoa.inf
   DevConsole|StdLib/LibC/Uefi/Devices/daConsole.inf
-  DevShell|StdLib/LibC/Uefi/Devices/daShell.inf       # DEPRECATED!  Please use DevMedia for new code.
-  DevMedia|StdLib/LibC/Uefi/Devices/daShell.inf
   DevUtility|StdLib/LibC/Uefi/Devices/daUtility.inf
 
   LuaLib|AppPkg/Applications/Lua/LuaLib.inf           # Lua language library
@@ -105,11 +105,6 @@
       MSFT:*_*_*_CC_FLAGS    = /X /Zc:wchar_t /GL-
   }
 
-  StdLib/LibC/LibC.inf {
-    <LibraryClasses>
-      NULL|ShellPkg/Library/UefiShellLib/UefiShellLib.inf
-  }
-
 ##########
 #  Socket Layer
 ##########
@@ -127,20 +122,20 @@
   # The Build Options, below, are only used when building the Standard Libraries
   # to be run under an emulation environment; such as NT32Pkg.
   # They disable optimization which facillitates debugging under the Emulation environment.
-  INTEL:*_*_IA32_CC_FLAGS   = /Od /D UEFI_C_SOURCE
-   MSFT:*_*_IA32_CC_FLAGS   = /Od /D UEFI_C_SOURCE
-    GCC:*_*_IA32_CC_FLAGS   = -O0 -DUEFI_C_SOURCE
-    RVCT:*_*_*_CC_FLAGS     = --library_interface=none -DUEFI_C_SOURCE -J$(WORKSPACE)/StdLib/Include -J$(WORKSPACE)/StdLib/Include/Arm
-   XCODE:*_*_*_CC_FLAGS     = -O0 -DUEFI_C_SOURCE -Wno-unused-const-variable -Wno-string-compare -Wno-sometimes-uninitialized
+  INTEL:*_*_IA32_CC_FLAGS   = /Od /D UEFI_C_SOURCE /D STDLIB_NO_SHELL
+   MSFT:*_*_IA32_CC_FLAGS   = /Od /D UEFI_C_SOURCE /D STDLIB_NO_SHELL
+    GCC:*_*_IA32_CC_FLAGS   = -O0 -DUEFI_C_SOURCE -DSTDLIB_NO_SHELL
+    RVCT:*_*_*_CC_FLAGS     = --library_interface=none -DUEFI_C_SOURCE -DSTDLIB_NO_SHELL -J$(WORKSPACE)/StdLib/Include -J$(WORKSPACE)/StdLib/Include/Arm
+   XCODE:*_*_*_CC_FLAGS     = -O0 -DUEFI_C_SOURCE -DSTDLIB_NO_SHELL -Wno-unused-const-variable -Wno-string-compare -Wno-sometimes-uninitialized
 
 !else
   # These Build Options are used when building the Standard Libraries to be run
   # on real hardware.
-   INTEL:*_*_*_CC_FLAGS     = /Qfreestanding /D UEFI_C_SOURCE
-    MSFT:*_*_*_CC_FLAGS     = /X /Zc:wchar_t /D UEFI_C_SOURCE
-     GCC:*_*_*_CC_FLAGS     = -nostdinc -nostdlib -DUEFI_C_SOURCE
-    RVCT:*_*_*_CC_FLAGS     = --library_interface=none -DUEFI_C_SOURCE -J$(WORKSPACE)/StdLib/Include -J$(WORKSPACE)/StdLib/Include/Arm
-   XCODE:*_*_*_CC_FLAGS     = -nostdinc -nostdlib -DUEFI_C_SOURCE -Wno-unused-const-variable -Wno-string-compare -Wno-sometimes-uninitialized
+   INTEL:*_*_*_CC_FLAGS     = /Qfreestanding /D UEFI_C_SOURCE /D STDLIB_NO_SHELL
+    MSFT:*_*_*_CC_FLAGS     = /X /Zc:wchar_t /D UEFI_C_SOURCE /D STDLIB_NO_SHELL
+     GCC:*_*_*_CC_FLAGS     = -nostdinc -nostdlib -DUEFI_C_SOURCE -DSTDLIB_NO_SHELL
+    RVCT:*_*_*_CC_FLAGS     = --library_interface=none -DUEFI_C_SOURCE -DSTDLIB_NO_SHELL -J$(WORKSPACE)/StdLib/Include -J$(WORKSPACE)/StdLib/Include/Arm
+   XCODE:*_*_*_CC_FLAGS     = -nostdinc -nostdlib -DUEFI_C_SOURCE -DSTDLIB_NO_SHELL -Wno-unused-const-variable -Wno-string-compare -Wno-sometimes-uninitialized
 !endif
 
   # Temporarily restrict compiler warnings to those produced by VS2012.

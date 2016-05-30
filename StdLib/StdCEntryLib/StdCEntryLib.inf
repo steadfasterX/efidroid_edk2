@@ -15,38 +15,28 @@
 
 [Defines]
   INF_VERSION                    = 0x00010005
-  BASE_NAME                      = LibStdLib
-  FILE_GUID                      = f8a312f8-bccc-479f-b49b-ce129568b06a
-  MODULE_TYPE                    = UEFI_APPLICATION
+  BASE_NAME                      = StdCEntryLib
+  FILE_GUID                      = b8ba8e7b-8229-4bda-837e-7476d5a25366
+  MODULE_TYPE                    = BASE
   VERSION_STRING                 = 1.0
-  LIBRARY_CLASS                  = LibStdLib
+  LIBRARY_CLASS                  = StdCEntryLib
 
 #
 #  VALID_ARCHITECTURES           = IA32 X64 IPF
 #
 
 [Sources]
-  Bsearch.c
-  Environs.c
-  Malloc.c
-  NumericInt.c
-  Qsort.c
-  Rand.c
-  strtoimax.c
-  strtoumax.c
-  Xabs.c
-  Xdiv.c
-  realpath.c
-  setprogname.c
+  StdCEntryLib.c
 
 [Packages]
   StdLib/StdLib.dec
   StdLibPrivateInternalFiles/DoNotUse.dec
   MdePkg/MdePkg.dec
-  ShellPkg/ShellPkg.dec
 
 [LibraryClasses]
   UefiBootServicesTableLib
+  UefiRuntimeServicesTableLib
+  UefiLib
   DebugLib
   BaseLib
   BaseMemoryLib
@@ -54,6 +44,8 @@
   LibC
   LibCType
   LibSignal
+  LibWchar
+  DevConsole
 
 ################################################################
 #
