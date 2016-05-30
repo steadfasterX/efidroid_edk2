@@ -37,7 +37,6 @@
 
 [LibraryClasses]
   MemoryAllocationLib
-  ShellLib
   BaseLib
   LibC
   LibStdio

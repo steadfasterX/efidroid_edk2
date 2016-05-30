@@ -44,7 +44,6 @@
   BaseMemoryLib
   MemoryAllocationLib
   UefiBootServicesTableLib
-  ShellLib
   LibC
   LibLocale
   LibString

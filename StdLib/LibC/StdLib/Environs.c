@@ -20,7 +20,9 @@
 #include  <Library/UefiBootServicesTableLib.h>
 #include  <Library/BaseLib.h>
 #include  <Library/MemoryAllocationLib.h>
+#ifndef STDLIB_NO_SHELL
 #include  <Library/ShellLib.h>
+#endif
 
 #include  <LibConfig.h>
 
@@ -144,6 +146,7 @@ _Exit(int status)
 int
 system(const char *string)
 {
+#ifndef STDLIB_NO_SHELL
   EFI_STATUS  CmdStat;
   EFI_STATUS  OpStat;
   EFI_HANDLE  MyHandle = gImageHandle;
@@ -158,6 +161,7 @@ system(const char *string)
     return EXIT_SUCCESS;
   }
   EFIerrno = OpStat;
+#endif
   return EXIT_FAILURE;
 }
 
@@ -174,14 +178,18 @@ system(const char *string)
 **/
 char   *getenv(const char *name)
 {
+#ifndef STDLIB_NO_SHELL
   const CHAR16  *EfiEnv;
+#endif
   char          *retval = NULL;
 
+#ifndef STDLIB_NO_SHELL
   (void)AsciiStrToUnicodeStr( name, gMD->UString);
   EfiEnv = ShellGetEnvironmentVariable(gMD->UString);
   if(EfiEnv != NULL) {
     retval = UnicodeStrToAsciiStr( EfiEnv, gMD->ASgetenv);
   }
+#endif
 
   return retval;
 }
@@ -213,6 +221,7 @@ setenv (
   int rewrite
   )
 {
+#ifndef STDLIB_NO_SHELL
   CONST CHAR16 * HostName;
   int retval;
   EFI_STATUS Status;
@@ -278,5 +287,9 @@ setenv (
   //  Return the operation status
   //
   return retval;
+
+#else
+  return -1;
+#endif
 }
 
