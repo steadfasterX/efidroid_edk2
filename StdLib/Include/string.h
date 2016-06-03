@@ -418,6 +418,7 @@ char     *strstr(const char *S1 , const char *S2);
               token, or a null pointer if there is no token.
 **/
 char     *strtok(char * __restrict S1, const char * __restrict S2);
+char     *strtok_r(char * __restrict S1, const char * __restrict S2, char **last);
 
 /* ################   Miscellaneous Functions   ########################### */
 

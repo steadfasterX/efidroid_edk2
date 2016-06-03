@@ -218,16 +218,15 @@ strstr(const char *s1 , const char *s2)
               token, or a null pointer if there is no token.
 **/
 char *
-strtok(char * __restrict s1, const char * __restrict s2)
+strtok_r(char * __restrict s1, const char * __restrict s2, char **Next)
 {
-  static char  *Next  = NULL;
   UINT8         bitmap[ (((UCHAR_MAX + 1) / CHAR_BIT) + (CHAR_BIT - 1)) & ~7U];
   char         *Token = NULL;
   int           index;
   UINT8         bit;
 
   if(     (s1 == NULL)
-      &&  ((s1 = Next) == NULL))
+      &&  ((s1 = *Next) == NULL))
   {
     return  NULL;
   }
@@ -252,11 +251,17 @@ strtok(char * __restrict s1, const char * __restrict s2)
       bit = WHICH_BIT(*s1);
       if( (bitmap[index] & bit) != 0) {
         *s1++ = '\0';
-        Next = s1;
+        *Next = s1;
         return Token;
       }
     }
   }
-  Next = NULL;
+  *Next = NULL;
   return Token;
+}
+
+char *
+strtok(char * __restrict s1, const char * __restrict s2) {
+    static char  *Next  = NULL;
+    return strtok_r(s1, s2, &Next);
 }
