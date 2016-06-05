@@ -76,6 +76,7 @@
 [Packages]
   MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
+  LittleKernelPkg/LittleKernelPkg.dec
 
 [LibraryClasses]
   BaseMemoryLib
