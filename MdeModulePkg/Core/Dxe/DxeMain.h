@@ -94,6 +94,8 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include <Library/DebugAgentLib.h>
 #include <Library/CpuExceptionHandlerLib.h>
 
+#include <LittleKernel.h>
+
 
 //
 // attributes for reserved memory before it is promoted to system memory

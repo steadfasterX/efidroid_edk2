@@ -758,6 +758,8 @@ CoreExitBootServices (
 
   gMemoryMapTerminated = TRUE;
 
+  GetLKApi()->platform_uninit();
+
   //
   // Notify other drivers that we are exiting boot services.
   //
