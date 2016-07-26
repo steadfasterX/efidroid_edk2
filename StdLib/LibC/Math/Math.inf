@@ -40,12 +40,48 @@
   e_sqrt.c
   e_fmod.c
   e_rem_pio2.c
+  e_acosf.c
+  e_acosh.c
+  e_acoshf.c
+  e_asinf.c
+  e_atan2f.c
+  e_atanh.c
+  e_atanhf.c
+  e_coshf.c
+  e_expf.c
+  e_fmodf.c
+  e_hypot.c
+  e_hypotf.c
+  e_j0.c
+  e_j0f.c
+  e_j1.c
+  e_j1f.c
+  e_jn.c
+  e_jnf.c
+  e_lgamma_r.c
+  e_lgammaf_r.c
+  e_log10f.c
+  e_log2f.c
+  e_logf.c
+  e_powf.c
+  e_rem_pio2f.c
+  e_remainder.c
+  e_remainderf.c
+  e_scalb.c
+  e_scalbf.c
+  e_sinhf.c
+  e_sqrtf.c
 
   # kernel functions
   k_cos.c
   k_sin.c
   k_tan.c
   k_rem_pio2.c
+  k_cosf.c
+  k_rem_pio2f.c
+  k_sinf.c
+  k_standard.c
+  k_tanf.c
 
   # Simple, unadorned, functions
   s_atan.c
@@ -64,6 +100,50 @@
   s_fabs.c
   s_ceil.c
   s_floor.c
+  s_asinh.c
+  s_asinhf.c
+  s_atanf.c
+  s_cbrt.c
+  s_cbrtf.c
+  s_ceilf.c
+  s_copysignf.c
+  s_cosf.c
+  s_erf.c
+  s_erff.c
+  s_expm1f.c
+  s_fabsf.c
+  s_finitef.c
+  s_floorf.c
+  s_frexpf.c
+  s_ilogb.c
+  s_ilogbf.c
+  #s_isinf.c
+  s_isinff.c
+  #s_isnan.c
+  s_isnanf.c
+  s_ldexpf.c
+  s_lib_version.c
+  s_log1p.c
+  s_log1pf.c
+  s_logb.c
+  s_logbf.c
+  s_matherr.c
+  s_modff.c
+  s_nextafter.c
+  s_nextafterf.c
+  s_rint.c
+  s_rintf.c
+  s_round.c
+  s_roundf.c
+  s_scalbnf.c
+  s_signgam.c
+  s_significand.c
+  s_significandf.c
+  s_sinf.c
+  s_tanf.c
+  s_tanhf.c
+  s_trunc.c
+  s_truncf.c
 
   # wrapper functions
   w_acos.c
@@ -78,8 +158,58 @@
   w_pow.c
   w_sqrt.c
   w_fmod.c
+  w_acosf.c
+  w_acosh.c
+  w_acoshf.c
+  w_asinf.c
+  w_atan2f.c
+  w_atanh.c
+  w_atanhf.c
+  #w_cabs.c
+  #w_cabsf.c
+  w_coshf.c
+  w_drem.c
+  w_dremf.c
+  w_expf.c
+  w_fmodf.c
+  w_gamma.c
+  w_gamma_r.c
+  w_gammaf.c
+  w_gammaf_r.c
+  w_hypot.c
+  w_hypotf.c
+  w_j0.c
+  w_j0f.c
+  w_j1.c
+  w_j1f.c
+  w_jn.c
+  w_jnf.c
+  w_lgamma.c
+  w_lgamma_r.c
+  w_lgammaf.c
+  w_lgammaf_r.c
+  w_log10f.c
+  w_log2f.c
+  w_logf.c
+  w_powf.c
+  w_remainder.c
+  w_remainderf.c
+  w_scalb.c
+  w_scalbf.c
+  w_sinhf.c
+  w_sqrtf.c
 
+  # misc
   sincos.c
+  llrint.c
+  llrintf.c
+  llround.c
+  llroundf.c
+  lrint.c
+  lrintf.c
+  lround.c
+  lroundf.c
+
 
 [Packages]
   StdLib/StdLib.dec
