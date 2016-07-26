@@ -17,6 +17,10 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #ifndef __BASE_LIB__
 #define __BASE_LIB__
 
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
 //
 // Definitions for architecture-specific types
 //
@@ -7837,6 +7841,11 @@ AsmRdRand64  (
   );
 
 #endif
+
+#if defined(__cplusplus)
+}
+#endif
+
 #endif
 
 

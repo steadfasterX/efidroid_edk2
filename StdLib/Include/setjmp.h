@@ -16,6 +16,8 @@
 #include  <Library/BaseLib.h>
 #include  <sys/EfiCdefs.h>
 
+__BEGIN_DECLS
+
 /** jmp_buf is an array type suitable for holding the information needed to
     restore a calling environment. The environment of a call to the setjmp
     macro consists of information sufficient for a call to the longjmp function
@@ -61,5 +63,7 @@ typedef BASE_LIBRARY_JUMP_BUFFER jmp_buf[1];
     return the value 0; if val is 0, the setjmp macro returns the value 1.
 **/
 extern void longjmp(jmp_buf env, int val);
+
+__END_DECLS
 
 #endif  /* _SETJMP_H */

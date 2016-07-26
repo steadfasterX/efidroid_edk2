@@ -44,6 +44,7 @@
   LibSignal|StdLib/LibC/Signal/Signal.inf
   LibStdio|StdLib/LibC/Stdio/Stdio.inf
   LibStdLib|StdLib/LibC/StdLib/StdLib.inf
+  LibStdCxxLib|StdLib/LibC/StdCxxLib/StdCxxLib.inf
   LibString|StdLib/LibC/String/String.inf
   LibTime|StdLib/LibC/Time/Time.inf
   LibUefi|StdLib/LibC/Uefi/Uefi.inf

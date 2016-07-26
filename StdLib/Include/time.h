@@ -80,6 +80,8 @@
 #define _TIME_H
 #include <sys/EfiCdefs.h>
 
+__BEGIN_DECLS
+
 #define CLOCKS_PER_SEC  __getCPS()
 
 #ifdef _EFI_SIZE_T_
@@ -430,5 +432,7 @@ char *strptime(const char *, const char * format, struct tm*);
 /* #################  Implementation Functions  ########################### */
 
 clock_t __getCPS(void);
+
+__END_DECLS
 
 #endif  /* _TIME_H */
