@@ -678,7 +678,7 @@ pow10(int exp)
 }
 
 static long
-round(long double value)
+local_round(long double value)
 {
   long intpart = value;
 
@@ -728,7 +728,7 @@ fmtfp(char *buffer, size_t *currlen, size_t maxlen, long double fvalue,
   /* We "cheat" by converting the fractional part to integer by
    * multiplying by a factor of 10
    */
-  fracpart = round((pow10 (max)) * (ufvalue - intpart));
+  fracpart = local_round((pow10 (max)) * (ufvalue - intpart));
 
   if (fracpart >= pow10 (max)) {
     intpart++;
