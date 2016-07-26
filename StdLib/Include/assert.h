@@ -29,6 +29,8 @@
 
 #undef  assert        ///< Remove any existing definition for assert.
 
+__BEGIN_DECLS
+
 /** Internal helper function for the assert macro.
     The __assert function prints a diagnostic message then exits the
     currently running application.
@@ -51,6 +53,8 @@
 **/
 extern void
 __assert(const char *file, const char *func, int line, const char *failedexpr) __noreturn;
+
+__END_DECLS
 
 /** The assert macro puts diagnostic tests into programs; it expands to a
     void expression.

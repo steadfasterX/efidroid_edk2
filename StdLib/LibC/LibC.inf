@@ -91,6 +91,7 @@
   Main/Arm/fixunssfsi.c
   Main/Arm/floatunsidf.c
   Main/Arm/floatunsisf.c
+  Main/Arm/floatundisf.c
   Main/Arm/flt_rounds.c
 
 [Sources.AARCH64]
@@ -112,6 +113,7 @@
   BaseMemoryLib
   MemoryAllocationLib
   LibStdLib
+  LibStdCxxLib
   LibStdio
   LibString
   DevConsole
