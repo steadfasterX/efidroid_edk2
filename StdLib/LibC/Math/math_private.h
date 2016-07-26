@@ -190,40 +190,40 @@ extern double __kernel_tan (double, double, int);
 extern int    __kernel_rem_pio2 (double*,double*,int,int,int,const int*);
 
 
-///* ieee style elementary float functions */
-//extern float __ieee754_sqrtf __P((float));
-//extern float __ieee754_acosf __P((float));
-//extern float __ieee754_acoshf __P((float));
-//extern float __ieee754_logf __P((float));
-//extern float __ieee754_atanhf __P((float));
-//extern float __ieee754_asinf __P((float));
-//extern float __ieee754_atan2f __P((float,float));
-//extern float __ieee754_expf __P((float));
-//extern float __ieee754_coshf __P((float));
-//extern float __ieee754_fmodf __P((float,float));
-//extern float __ieee754_powf __P((float,float));
-//extern float __ieee754_lgammaf_r __P((float,int *));
-//extern float __ieee754_gammaf_r __P((float,int *));
-//extern float __ieee754_lgammaf __P((float));
-//extern float __ieee754_gammaf __P((float));
-//extern float __ieee754_log10f __P((float));
-//extern float __ieee754_log2f __P((float));
-//extern float __ieee754_sinhf __P((float));
-//extern float __ieee754_hypotf __P((float,float));
-//extern float __ieee754_j0f __P((float));
-//extern float __ieee754_j1f __P((float));
-//extern float __ieee754_y0f __P((float));
-//extern float __ieee754_y1f __P((float));
-//extern float __ieee754_jnf __P((int,float));
-//extern float __ieee754_ynf __P((int,float));
-//extern float __ieee754_remainderf __P((float,float));
-//extern int   __ieee754_rem_pio2f __P((float,float*));
-//extern float __ieee754_scalbf __P((float,float));
+/* ieee style elementary float functions */
+extern float __ieee754_sqrtf (float);
+extern float __ieee754_acosf (float);
+extern float __ieee754_acoshf (float);
+extern float __ieee754_logf (float);
+extern float __ieee754_atanhf (float);
+extern float __ieee754_asinf (float);
+extern float __ieee754_atan2f (float,float);
+extern float __ieee754_expf (float);
+extern float __ieee754_coshf (float);
+extern float __ieee754_fmodf (float,float);
+extern float __ieee754_powf (float,float);
+extern float __ieee754_lgammaf_r (float,int *);
+extern float __ieee754_gammaf_r (float,int *);
+extern float __ieee754_lgammaf (float);
+extern float __ieee754_gammaf (float);
+extern float __ieee754_log10f (float);
+extern float __ieee754_log2f (float);
+extern float __ieee754_sinhf (float);
+extern float __ieee754_hypotf (float,float);
+extern float __ieee754_j0f (float);
+extern float __ieee754_j1f (float);
+extern float __ieee754_y0f (float);
+extern float __ieee754_y1f (float);
+extern float __ieee754_jnf (int,float);
+extern float __ieee754_ynf (int,float);
+extern float __ieee754_remainderf (float,float);
+extern int   __ieee754_rem_pio2f (float,float*);
+extern float __ieee754_scalbf (float,float);
 
-///* float versions of fdlibm kernel functions */
-//extern float __kernel_sinf __P((float,float,int));
-//extern float __kernel_cosf __P((float,float));
-//extern float __kernel_tanf __P((float,float,int));
-//extern int   __kernel_rem_pio2f __P((float*,float*,int,int,int,const int*));
+/* float versions of fdlibm kernel functions */
+extern float __kernel_sinf (float,float,int);
+extern float __kernel_cosf (float,float);
+extern float __kernel_tanf (float,float,int);
+extern int   __kernel_rem_pio2f (float*,float*,int,int,int,const int*);
 
 #endif /* _MATH_PRIVATE_H_ */
