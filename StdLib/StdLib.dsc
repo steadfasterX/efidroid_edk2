@@ -108,6 +108,7 @@
 # Standard C Libraries.
   StdLib/LibC/LibC.inf
   StdLib/LibC/StdLib/StdLib.inf
+  StdLib/LibC/StdCxxLib/StdCxxLib.inf
   StdLib/LibC/String/String.inf
   StdLib/LibC/Wchar/Wchar.inf
   StdLib/LibC/Ctype/Ctype.inf

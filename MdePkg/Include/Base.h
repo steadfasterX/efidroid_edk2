@@ -320,7 +320,11 @@ struct _LIST_ENTRY {
 ///
 /// NULL pointer (VOID *)
 ///
+#ifndef __cplusplus
 #define NULL  ((VOID *) 0)
+#else   /* C++ */
+#define NULL  0
+#endif  /* C++ */
 
 ///
 /// Maximum values for common UEFI Data Types
