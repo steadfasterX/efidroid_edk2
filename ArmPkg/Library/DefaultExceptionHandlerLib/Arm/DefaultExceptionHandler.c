@@ -47,12 +47,14 @@ GetImageName (
 
   @param  Cpsr         ARM CPSR register value
   @param  ReturnStr    32 byte string that contains string version of CPSR
+  @param  ReturnSize   The size of ReturnSize including the terminating null char.
 
 **/
 VOID
 CpsrString (
   IN  UINT32  Cpsr,
-  OUT CHAR8   *ReturnStr
+  OUT CHAR8   *ReturnStr,
+  IN  UINTN   ReturnSize
   )
 {
   UINTN     Index;
@@ -84,6 +86,7 @@ CpsrString (
 
   *Str++ = '_';
   *Str = '\0';
+  ReturnSize--;
 
   switch (Cpsr & 0x1f) {
   case 0x10:
@@ -116,7 +119,7 @@ CpsrString (
     break;
   }
 
-  AsciiStrCat (Str, ModeStr);
+  AsciiStrCatS (Str, ReturnSize, ModeStr);
   return;
 }
 
@@ -197,7 +200,7 @@ DefaultExceptionHandler (
     UINT8   *DisAsm;
     UINT32  ItBlock;
 
-    CpsrString (SystemContext.SystemContextArm->CPSR, CpsrStr);
+    CpsrString (SystemContext.SystemContextArm->CPSR, CpsrStr, sizeof(CpsrStr));
     DEBUG ((EFI_D_ERROR, "%a\n", CpsrStr));
 
     Pdb = GetImageName (SystemContext.SystemContextArm->PC, &ImageBase, &PeCoffSizeOfHeader);

@@ -80,7 +80,8 @@ CHAR8 *gLdmStack[] = {
 #define BYTE(_B)  ((_B) ? "B":"")
 #define USER(_B)  ((_B) ? "^" : "")
 
-CHAR8 mMregListStr[4*15 + 1];
+#define REGLISTSTR_SIZE (4*15 + 1)
+CHAR8 mMregListStr[REGLISTSTR_SIZE];
 
 CHAR8 *
 MRegList (
@@ -93,7 +94,7 @@ MRegList (
 
   Str = mMregListStr;
   *Str = '\0';
-  AsciiStrCat  (Str, "{");
+  AsciiStrCatS  (Str, REGLISTSTR_SIZE, "{");
   for (Index = 0, First = TRUE; Index <= 15; Index++) {
     if ((OpCode & (1 << Index)) != 0) {
       Start = End = Index;
@@ -102,25 +103,25 @@ MRegList (
       }
 
       if (!First) {
-        AsciiStrCat  (Str, ",");
+        AsciiStrCatS  (Str, REGLISTSTR_SIZE, ",");
       } else {
         First = FALSE;
       }
 
       if (Start == End) {
-        AsciiStrCat  (Str, gReg[Start]);
-        AsciiStrCat  (Str, ", ");
+        AsciiStrCatS  (Str, REGLISTSTR_SIZE, gReg[Start]);
+        AsciiStrCatS  (Str, REGLISTSTR_SIZE, ", ");
       } else {
-        AsciiStrCat  (Str, gReg[Start]);
-        AsciiStrCat  (Str, "-");
-        AsciiStrCat  (Str, gReg[End]);
+        AsciiStrCatS  (Str, REGLISTSTR_SIZE, gReg[Start]);
+        AsciiStrCatS  (Str, REGLISTSTR_SIZE, "-");
+        AsciiStrCatS  (Str, REGLISTSTR_SIZE, gReg[End]);
       }
     }
   }
   if (First) {
-    AsciiStrCat  (Str, "ERROR");
+    AsciiStrCatS  (Str, REGLISTSTR_SIZE, "ERROR");
   }
-  AsciiStrCat  (Str, "}");
+  AsciiStrCatS  (Str, REGLISTSTR_SIZE, "}");
 
   // BugBug: Make caller pass in buffer it is cleaner
   return mMregListStr;

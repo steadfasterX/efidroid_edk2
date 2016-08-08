@@ -389,7 +389,8 @@ CHAR8 *gShiftType[] = {
   "ROR"
 };
 
-CHAR8 mThumbMregListStr[4*15 + 1];
+#define REGLISTSTR_SIZE (4*15 + 1)
+CHAR8 mThumbMregListStr[REGLISTSTR_SIZE];
 
 CHAR8 *
 ThumbMRegList (
@@ -402,7 +403,7 @@ ThumbMRegList (
 
   Str = mThumbMregListStr;
   *Str = '\0';
-  AsciiStrCat  (Str, "{");
+  AsciiStrCatS  (Str, REGLISTSTR_SIZE, "{");
 
   for (Index = 0, First = TRUE; Index <= 15; Index++) {
     if ((RegBitMask & (1 << Index)) != 0) {
@@ -412,24 +413,24 @@ ThumbMRegList (
       }
 
       if (!First) {
-        AsciiStrCat  (Str, ",");
+        AsciiStrCatS  (Str, REGLISTSTR_SIZE, ",");
       } else {
         First = FALSE;
       }
 
       if (Start == End) {
-        AsciiStrCat  (Str, gReg[Start]);
+        AsciiStrCatS  (Str, REGLISTSTR_SIZE, gReg[Start]);
       } else {
-        AsciiStrCat  (Str, gReg[Start]);
-        AsciiStrCat  (Str, "-");
-        AsciiStrCat  (Str, gReg[End]);
+        AsciiStrCatS  (Str, REGLISTSTR_SIZE, gReg[Start]);
+        AsciiStrCatS  (Str, REGLISTSTR_SIZE, "-");
+        AsciiStrCatS  (Str, REGLISTSTR_SIZE, gReg[End]);
       }
     }
   }
   if (First) {
-    AsciiStrCat  (Str, "ERROR");
+    AsciiStrCatS  (Str, REGLISTSTR_SIZE, "ERROR");
   }
-  AsciiStrCat  (Str, "}");
+  AsciiStrCatS  (Str, REGLISTSTR_SIZE, "}");
 
   // BugBug: Make caller pass in buffer it is cleaner
   return mThumbMregListStr;
