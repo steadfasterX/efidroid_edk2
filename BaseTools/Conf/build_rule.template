@@ -137,6 +137,19 @@
     <Command.XCODE>
         "$(CC)" $(CC_FLAGS) -o ${dst} $(INC) ${src}
 
+[Prebuilt-Lib-File]
+    <InputFile>
+        ?.prebuilt
+
+    <ExtraDependency>
+        $(MAKE_FILE)
+
+    <OutputFile>
+        $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.obj
+
+    <Command>
+        $(CP) ${src} ${dst}
+
 [C-Code-File.COMMON.IPF]
     <InputFile>
         ?.c
