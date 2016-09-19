@@ -32,9 +32,14 @@
   MdePkg/MdePkg.dec
   ShellPkg/ShellPkg.dec
 
-[LibraryClasses]
-  UefiApplicationEntryPoint
+[LibraryClasses.common]
   DebugLib
+
+[LibraryClasses.UEFI_APPLICATION]
+  UefiApplicationEntryPoint
+
+[LibraryClasses.UEFI_DRIVER]
+  UefiDriverEntryPoint
 
 
 [Protocols]

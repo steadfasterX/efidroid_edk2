@@ -28,7 +28,7 @@
   EfiSocketLib|StdLib/EfiSocketLib/EfiSocketLib.inf
   UseSocketDxe|StdLib/UseSocketDxe/UseSocketDxe.inf
 
-[LibraryClasses.Common.UEFI_APPLICATION]
+[LibraryClasses.Common.UEFI_APPLICATION, LibraryClasses.Common.UEFI_DRIVER]
   FileHandleLib|MdePkg/Library/UefiFileHandleLib/UefiFileHandleLib.inf
   SortLib|MdeModulePkg/Library/UefiSortLib/UefiSortLib.inf
 
