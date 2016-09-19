@@ -50,6 +50,7 @@
 #  Arm/lshrdi3.c    | GCC
   Arm/ashrdi3.S    | GCC
   Arm/ashldi3.S    | GCC
+  Arm/lasr.S       | GCC
   Arm/div.S        | GCC
   Arm/divdi3.S     | GCC
   Arm/divsi3.S     | GCC
