@@ -33,6 +33,7 @@
 
 [Packages]
   MdePkg/MdePkg.dec
+  LittleKernelPkg/LittleKernelPkg.dec
 
 [LibraryClasses]
   SerialPortLib
@@ -41,6 +42,7 @@
   PrintLib
   BaseLib
   DebugPrintErrorLevelLib
+  LKApiLib
 
 [Pcd]
   gEfiMdePkgTokenSpaceGuid.PcdDebugClearMemoryValue  ## SOMETIMES_CONSUMES

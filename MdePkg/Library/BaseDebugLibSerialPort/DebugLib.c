@@ -140,6 +140,8 @@ DebugAssert (
   //
   SerialPortWrite ((UINT8 *)Buffer, AsciiStrLen (Buffer));
 
+  GetLKApi()->reset_warm("bootloader");
+
   //
   // Generate a Breakpoint, DeadLoop, or NOP based on PCD settings
   //
