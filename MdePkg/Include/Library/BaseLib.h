@@ -4859,6 +4859,7 @@ MemoryFence (
 **/
 UINTN
 EFIAPI
+RETURNS_TWICE
 SetJump (
   OUT     BASE_LIBRARY_JUMP_BUFFER  *JumpBuffer
   );
