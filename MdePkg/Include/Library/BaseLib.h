@@ -3795,6 +3795,7 @@ MemoryFence (
 **/
 UINTN
 EFIAPI
+__attribute__((returns_twice))
 SetJump (
   OUT     BASE_LIBRARY_JUMP_BUFFER  *JumpBuffer
   );
