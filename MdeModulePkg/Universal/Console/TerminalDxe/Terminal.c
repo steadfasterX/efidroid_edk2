@@ -118,7 +118,9 @@ TERMINAL_CONSOLE_MODE_DATA mTerminalConsoleModeData[] = {
   {100, 31},
   //
   // New modes can be added here.
+  // The last entry is specific for full screen mode.
   //
+  {0, 0}
 };
 
 /**
@@ -315,6 +317,8 @@ InitializeTerminalConsoleTextMode (
 )
 {
   TERMINAL_CONSOLE_MODE_DATA  *TextModeData;
+  EFI_STATUS                  Status;
+  EFI_GRAPHICS_OUTPUT_PROTOCOL *GraphicsOutput;
 
   ASSERT (TextModeCount != NULL);
 
@@ -323,6 +327,58 @@ InitializeTerminalConsoleTextMode (
     return NULL;
   }
   *TextModeCount = ARRAY_SIZE (mTerminalConsoleModeData);
+
+  // get graphics protocol
+  Status = gBS->LocateProtocol (&gEfiGraphicsOutputProtocolGuid, NULL, (VOID **) &GraphicsOutput);
+  if (!EFI_ERROR (Status)) {
+    UINT32                               ModeIndex;
+    UINTN                                SizeOfInfo;
+    EFI_GRAPHICS_OUTPUT_MODE_INFORMATION *Info;
+    UINTN                                BestModeColumns;
+    UINTN                                BestModeRows;
+
+    BestModeColumns = 0;
+    BestModeRows = 0;
+
+    // get best GOP mode
+    for (ModeIndex = 0; ModeIndex < GraphicsOutput->Mode->MaxMode; ModeIndex++) {
+      Status = GraphicsOutput->QueryMode (
+                         GraphicsOutput,
+                         ModeIndex,
+                         &SizeOfInfo,
+                         &Info
+                         );
+      if (!EFI_ERROR (Status)) {
+        UINTN Columns = Info->HorizontalResolution/EFI_GLYPH_WIDTH;
+        UINTN Rows = Info->VerticalResolution/EFI_GLYPH_HEIGHT;
+
+        if (Columns * Rows > BestModeColumns * BestModeRows) {
+          BestModeColumns = Info->HorizontalResolution/EFI_GLYPH_WIDTH;
+          BestModeRows = Info->VerticalResolution/EFI_GLYPH_HEIGHT;
+        }
+
+        FreePool (Info);
+      }
+    }
+
+    if (BestModeColumns>0 && BestModeRows>0) {
+      // add fullscreen mode
+      TextModeData[(*TextModeCount) - 1].Columns = BestModeColumns;
+      TextModeData[(*TextModeCount) - 1].Rows = BestModeRows;
+
+      // lower 80x25 resolution for very small screens
+      if (BestModeColumns < 80)
+        TextModeData[0].Columns = BestModeColumns;
+      if (BestModeRows < 25)
+        TextModeData[0].Columns = BestModeRows;
+    }
+    else {
+      (*TextModeCount) -= 1;
+    }
+  }
+  else {
+    (*TextModeCount) -= 1;
+  }
 
   DEBUG_CODE (
     INT32 Index;
