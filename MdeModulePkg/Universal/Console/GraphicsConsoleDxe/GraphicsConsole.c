@@ -261,11 +261,6 @@ InitializeGraphicsConsoleTextMode (
   MaxRows    = VerticalResolution / EFI_GLYPH_HEIGHT;
 
   //
-  // According to UEFI spec, all output devices support at least 80x25 text mode.
-  //
-  ASSERT ((MaxColumns >= 80) && (MaxRows >= 25));
-
-  //
   // Add full screen mode to the last entry.
   //
   mGraphicsConsoleModeData[Count - 1].Columns = MaxColumns;
@@ -289,8 +284,14 @@ InitializeGraphicsConsoleTextMode (
   //
   ValidCount = 0;  
 
-  NewModeBuffer[ValidCount].Columns       = 80;
-  NewModeBuffer[ValidCount].Rows          = 25;
+  if (MaxColumns < 80)
+    NewModeBuffer[ValidCount].Columns = MaxColumns;
+  else
+    NewModeBuffer[ValidCount].Columns = 80;
+  if (MaxRows < 25)
+    NewModeBuffer[ValidCount].Rows    = MaxRows;
+  else
+    NewModeBuffer[ValidCount].Rows    = 25;
   NewModeBuffer[ValidCount].GopWidth      = HorizontalResolution;
   NewModeBuffer[ValidCount].GopHeight     = VerticalResolution;
   NewModeBuffer[ValidCount].GopModeNumber = GopModeNumber;

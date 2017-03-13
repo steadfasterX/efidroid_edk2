@@ -3017,6 +3017,54 @@ ConsplitterSetConsoleOutMode (
   CONSOLE_OUT_MODE                 ModeInfo;
   CONSOLE_OUT_MODE                 MaxModeInfo;
   EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL  *TextOut;
+  EFI_GRAPHICS_OUTPUT_PROTOCOL     *GraphicsOutput;
+  UINTN                            BaseModeColumns;
+  UINTN                            BaseModeRows;
+
+  BaseModeColumns = 80;
+  BaseModeRows = 25;
+
+  // get graphics protocol
+  Status = gBS->LocateProtocol (&gEfiGraphicsOutputProtocolGuid, NULL, (VOID **) &GraphicsOutput);
+  if (!EFI_ERROR (Status)) {
+    UINT32                               ModeIndex;
+    UINTN                                SizeOfInfo;
+    EFI_GRAPHICS_OUTPUT_MODE_INFORMATION *Info;
+    UINTN                                BestModeColumns;
+    UINTN                                BestModeRows;
+
+    BestModeColumns = 0;
+    BestModeRows = 0;
+
+    // get best GOP mode
+    for (ModeIndex = 0; ModeIndex < GraphicsOutput->Mode->MaxMode; ModeIndex++) {
+      Status = GraphicsOutput->QueryMode (
+                         GraphicsOutput,
+                         ModeIndex,
+                         &SizeOfInfo,
+                         &Info
+                         );
+      if (!EFI_ERROR (Status)) {
+        UINTN Columns = Info->HorizontalResolution/EFI_GLYPH_WIDTH;
+        UINTN Rows = Info->VerticalResolution/EFI_GLYPH_HEIGHT;
+
+        if (Columns * Rows > BestModeColumns * BestModeRows) {
+          BestModeColumns = Info->HorizontalResolution/EFI_GLYPH_WIDTH;
+          BestModeRows = Info->VerticalResolution/EFI_GLYPH_HEIGHT;
+        }
+
+        FreePool (Info);
+      }
+    }
+
+    if (BestModeColumns>0 && BestModeRows>0) {
+      // lower 80x25 resolution for very small screens
+      if (BestModeColumns < 80)
+        BaseModeColumns = BestModeColumns;
+      if (BestModeRows < 25)
+        BaseModeRows = BestModeRows;
+    }
+  }
 
   PreferMode   = 0xFF;
   BaseMode     = 0xFF;
@@ -3052,7 +3100,7 @@ ConsplitterSetConsoleOutMode (
           PreferMode          = Mode;
         }
       }
-      if (Col == 80 && Row == 25) {
+      if (Col == BaseModeColumns && Row == BaseModeRows) {
         BaseMode = Mode;
       }
     }
@@ -3069,9 +3117,9 @@ ConsplitterSetConsoleOutMode (
     Status = TextOut->SetMode (TextOut, BaseMode);
     ASSERT(!EFI_ERROR(Status));
 
-    Status = PcdSet32S (PcdConOutColumn, 80);
+    Status = PcdSet32S (PcdConOutColumn, BaseModeColumns);
     ASSERT(!EFI_ERROR(Status));
-    Status = PcdSet32S (PcdConOutRow, 25);
+    Status = PcdSet32S (PcdConOutRow, BaseModeRows);
     ASSERT(!EFI_ERROR(Status));
   }
 
