@@ -32,6 +32,7 @@
 #include <Library/PcdLib.h>
 #include <Library/PciLib.h>
 #include <Library/QemuFwCfgLib.h>
+#include <Library/QemuFwCfgS3Lib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Protocol/S3SaveState.h>
 #include <Protocol/SmmControl2.h>
@@ -377,14 +378,15 @@ OnS3SaveStateInstalled (
     CpuDeadLoop ();
   }
 
+  DEBUG ((DEBUG_VERBOSE, "%a: chipset boot script saved\n", __FUNCTION__));
+
   //
   // Append a boot script fragment that re-selects the negotiated SMI features.
   //
   if (mSmiFeatureNegotiation) {
-    SaveSmiFeatures (S3SaveState);
+    SaveSmiFeatures ();
   }
 
-  DEBUG ((EFI_D_VERBOSE, "%a: boot script fragment saved\n", __FUNCTION__));
   gBS->CloseEvent (Event);
   mS3SaveStateInstalled = NULL;
 }

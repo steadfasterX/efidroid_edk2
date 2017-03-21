@@ -19,6 +19,7 @@
 #include <Library/BaseMemoryLib.h>
 #include <Library/MemoryAllocationLib.h>
 #include <Library/QemuFwCfgLib.h>
+#include <Library/QemuFwCfgS3Lib.h>
 #include <Library/DxeServicesTableLib.h>
 #include <Library/PcdLib.h>
 #include <Library/OrderedCollectionLib.h>
@@ -847,6 +848,13 @@ InstallQemuFwCfgTables (
   //
   if (S3Context != NULL) {
     Status = TransferS3ContextToBootScript (S3Context);
+    if (EFI_ERROR (Status)) {
+      goto UninstallAcpiTables;
+    }
+    //
+    // Ownership of S3Context has been transfered.
+    //
+    S3Context = NULL;
   }
 
 UninstallAcpiTables:
