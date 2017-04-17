@@ -386,7 +386,7 @@ ${END}
 #
 clean:
 \t${BEGIN}${clean_command}
-\t${END}
+\t${END}\t$(RM) AutoGenTimeStamp
 
 #
 # clean all generated files
@@ -395,6 +395,7 @@ cleanall:
 ${BEGIN}\t${cleanall_command}
 ${END}\t$(RM) *.pdb *.idb > NUL 2>&1
 \t$(RM) $(BIN_DIR)${separator}$(MODULE_NAME).efi
+\t$(RM) AutoGenTimeStamp
 
 #
 # clean all dependent libraries built
@@ -801,6 +802,9 @@ cleanlib:
             if not self.FileDependency[File]:
                 self.FileDependency[File] = ['$(FORCE_REBUILD)']
                 continue
+
+            self._AutoGenObject.AutoGenDepSet |= set(self.FileDependency[File])
+
             # skip non-C files
             if File.Ext not in [".c", ".C"] or File.Name == "AutoGen.c":
                 continue

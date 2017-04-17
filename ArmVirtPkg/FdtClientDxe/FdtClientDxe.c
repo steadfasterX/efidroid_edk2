@@ -17,14 +17,12 @@
 #include <Library/DebugLib.h>
 #include <Library/UefiDriverEntryPoint.h>
 #include <Library/UefiBootServicesTableLib.h>
-#include <Library/UefiLib.h>
 #include <Library/HobLib.h>
 #include <libfdt.h>
 
-#include <Guid/Acpi.h>
-#include <Guid/EventGroup.h>
 #include <Guid/Fdt.h>
 #include <Guid/FdtHob.h>
+#include <Guid/PlatformHasDeviceTree.h>
 
 #include <Protocol/FdtClient.h>
 
@@ -212,6 +210,7 @@ FindNextMemoryNodeReg (
 {
   INT32          Prev, Next;
   CONST CHAR8    *DeviceType;
+  CONST CHAR8    *NodeStatus;
   INT32          Len;
   EFI_STATUS     Status;
 
@@ -222,6 +221,13 @@ FindNextMemoryNodeReg (
     Next = fdt_next_node (mDeviceTreeBase, Prev, NULL);
     if (Next < 0) {
       break;
+    }
+
+    NodeStatus = fdt_getprop (mDeviceTreeBase, Next, "status", &Len);
+    if (NodeStatus != NULL && AsciiStrCmp (NodeStatus, "okay") != 0) {
+      DEBUG ((DEBUG_WARN, "%a: ignoring memory node with status \"%a\"\n",
+        __FUNCTION__, NodeStatus));
+      continue;
     }
 
     DeviceType = fdt_getprop (mDeviceTreeBase, Next, "device_type", &Len);
@@ -312,30 +318,36 @@ STATIC FDT_CLIENT_PROTOCOL mFdtClientProtocol = {
 STATIC
 VOID
 EFIAPI
-OnReadyToBoot (
-  EFI_EVENT       Event,
-  VOID            *Context
+OnPlatformHasDeviceTree (
+  IN EFI_EVENT Event,
+  IN VOID      *Context
   )
 {
-  EFI_STATUS      Status;
-  VOID            *Table;
+  EFI_STATUS Status;
+  VOID       *Interface;
+  VOID       *DeviceTreeBase;
 
-  //
-  // Only install the FDT as a configuration table if we are not exposing
-  // ACPI 2.0 (or later) tables. Note that the legacy ACPI table GUID has
-  // no meaning on ARM since we need at least ACPI 5.0 support, and the
-  // 64-bit ACPI 2.0 table GUID is mandatory in that case.
-  //
-  Status = EfiGetSystemConfigurationTable (&gEfiAcpi20TableGuid, &Table);
-  if (EFI_ERROR (Status) || Table == NULL) {
-    Status = gBS->InstallConfigurationTable (&gFdtTableGuid, mDeviceTreeBase);
-    ASSERT_EFI_ERROR (Status);
+  Status = gBS->LocateProtocol (
+                  &gEdkiiPlatformHasDeviceTreeGuid,
+                  NULL,                             // Registration
+                  &Interface
+                  );
+  if (EFI_ERROR (Status)) {
+    return;
   }
+
+  DeviceTreeBase = Context;
+  DEBUG ((
+    DEBUG_INFO,
+    "%a: exposing DTB @ 0x%p to OS\n",
+    __FUNCTION__,
+    DeviceTreeBase
+    ));
+  Status = gBS->InstallConfigurationTable (&gFdtTableGuid, DeviceTreeBase);
+  ASSERT_EFI_ERROR (Status);
 
   gBS->CloseEvent (Event);
 }
-
-STATIC EFI_EVENT         mReadyToBootEvent;
 
 EFI_STATUS
 EFIAPI
@@ -347,6 +359,8 @@ InitializeFdtClientDxe (
   VOID              *Hob;
   VOID              *DeviceTreeBase;
   EFI_STATUS        Status;
+  EFI_EVENT         PlatformHasDeviceTreeEvent;
+  VOID              *Registration;
 
   Hob = GetFirstGuidHob (&gFdtHobGuid);
   if (Hob == NULL || GET_GUID_HOB_DATA_SIZE (Hob) != sizeof (UINT64)) {
@@ -364,21 +378,65 @@ InitializeFdtClientDxe (
 
   DEBUG ((EFI_D_INFO, "%a: DTB @ 0x%p\n", __FUNCTION__, mDeviceTreeBase));
 
-  Status = gBS->InstallProtocolInterface (&ImageHandle, &gFdtClientProtocolGuid,
-                  EFI_NATIVE_INTERFACE, &mFdtClientProtocol);
+  //
+  // Register a protocol notify for the EDKII Platform Has Device Tree
+  // Protocol.
+  //
+  Status = gBS->CreateEvent (
+                  EVT_NOTIFY_SIGNAL,
+                  TPL_CALLBACK,
+                  OnPlatformHasDeviceTree,
+                  DeviceTreeBase,             // Context
+                  &PlatformHasDeviceTreeEvent
+                  );
   if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "%a: CreateEvent(): %r\n", __FUNCTION__, Status));
     return Status;
   }
 
-  Status = gBS->CreateEventEx (
-                  EVT_NOTIFY_SIGNAL,
-                  TPL_CALLBACK,
-                  OnReadyToBoot,
-                  NULL,
-                  &gEfiEventReadyToBootGuid,
-                  &mReadyToBootEvent
+  Status = gBS->RegisterProtocolNotify (
+                  &gEdkiiPlatformHasDeviceTreeGuid,
+                  PlatformHasDeviceTreeEvent,
+                  &Registration
                   );
-  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a: RegisterProtocolNotify(): %r\n",
+      __FUNCTION__,
+      Status
+      ));
+    goto CloseEvent;
+  }
 
-  return EFI_SUCCESS;
+  //
+  // Kick the event; the protocol could be available already.
+  //
+  Status = gBS->SignalEvent (PlatformHasDeviceTreeEvent);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "%a: SignalEvent(): %r\n", __FUNCTION__, Status));
+    goto CloseEvent;
+  }
+
+  Status = gBS->InstallProtocolInterface (
+                  &ImageHandle,
+                  &gFdtClientProtocolGuid,
+                  EFI_NATIVE_INTERFACE,
+                  &mFdtClientProtocol
+                  );
+  if (EFI_ERROR (Status)) {
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a: InstallProtocolInterface(): %r\n",
+      __FUNCTION__,
+      Status
+      ));
+    goto CloseEvent;
+  }
+
+  return Status;
+
+CloseEvent:
+  gBS->CloseEvent (PlatformHasDeviceTreeEvent);
+  return Status;
 }
