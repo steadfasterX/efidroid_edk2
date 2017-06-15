@@ -881,15 +881,15 @@ cleanlib:
     ## Return a list containing source file's dependencies
     #
     #   @param      FileList        The list of source files
-    #   @param      ForceInculeList The list of files which will be included forcely
+    #   @param      ForceIncludeList The list of files which will be included forcely
     #   @param      SearchPathList  The list of search path
     #
     #   @retval     dict            The mapping between source file path and its dependencies
     #
-    def GetFileDependency(self, FileList, ForceInculeList, SearchPathList):
+    def GetFileDependency(self, FileList, ForceIncludeList, SearchPathList):
         Dependency = {}
         for F in FileList:
-            Dependency[F] = self.GetDependencyList(F, ForceInculeList, SearchPathList)
+            Dependency[F] = self.GetDependencyList(F, ForceIncludeList, SearchPathList)
         return Dependency
 
     ## Find dependencies for one source file
@@ -899,7 +899,7 @@ cleanlib:
     #  in given search path list.
     #
     #   @param      File            The source file
-    #   @param      ForceInculeList The list of files which will be included forcely
+    #   @param      ForceList       The list of files which will be included forcely
     #   @param      SearchPathList  The list of search path
     #
     #   @retval     list            The list of files the given source file depends on

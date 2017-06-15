@@ -107,7 +107,7 @@ class FileBuildRule:
     ## constructor
     #
     #   @param  Input       The dictionary represeting input file(s) for a rule
-    #   @param  Output      The list represeting output file(s) for a rule
+    #   @param  Output      The list representing output file(s) for a rule
     #   @param  Command     The list containing commands to generate the output from input
     #
     def __init__(self, Type, Input, Output, Command, ExtraDependency=None):
