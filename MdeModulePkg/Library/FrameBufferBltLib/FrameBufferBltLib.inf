@@ -23,6 +23,7 @@
 
 [Sources.common]
   FrameBufferBltLib.c
+  Test.S
 
 [LibraryClasses]
   BaseLib
