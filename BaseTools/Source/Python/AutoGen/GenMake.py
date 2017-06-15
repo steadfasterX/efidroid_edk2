@@ -24,6 +24,7 @@ from Common.BuildToolError import *
 from Common.Misc import *
 from Common.String import *
 from BuildEngine import *
+import urcc.urcc as urcc
 import Common.GlobalData as GlobalData
 
 ## Regular expression for finding header file inclusions
@@ -828,6 +829,15 @@ cleanlib:
             NewDepSet = set(self.FileDependency[File])
             NewDepSet -= DepSet
             self.FileDependency[File] = ["$(COMMON_DEPS)"] + list(NewDepSet)
+
+        for File in self.FileDependency:
+            if File.Ext not in [".urc", ".URC"]:
+                continue
+
+            Deps = self.FileDependency[File]
+            urc = urcc.Urc(File)
+            for Dep in urc.getDependencies():
+                Deps.append(Dep)
 
         # Convert target description object to target string in makefile
         for Type in self._AutoGenObject.Targets:

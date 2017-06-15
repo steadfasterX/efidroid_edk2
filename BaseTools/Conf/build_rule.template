@@ -137,6 +137,22 @@
     <Command.XCODE>
         "$(CC)" $(CC_FLAGS) -o ${dst} $(INC) ${src}
 
+[Uefi-Resource-Container-File]
+    <InputFile>
+        ?.urc
+
+    <ExtraDependency>
+        $(MAKE_FILE)
+
+    <OutputFile.MSFT, OutputFile.INTEL, OutputFile.RVCT>
+        $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.asm
+
+    <OutputFile.GCC, OutputFile.GCCLD>
+        $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.S
+
+    <Command>
+        urcc --compile -o ${dst} ${src}
+
 [Prebuilt-Lib-File]
     <InputFile>
         ?.prebuilt
