@@ -20,6 +20,9 @@
 #include <Library/DebugLib.h>
 #include <Library/FrameBufferBltLib.h>
 
+UINTN FrameBufferBltLibCopy32BitTo24Bit(VOID *dst, VOID *src, UINTN n);
+UINTN FrameBufferBltLibCopy24BitTo32Bit(VOID *dst, VOID *src, UINTN n);
+
 struct FRAME_BUFFER_CONFIGURE {
   UINTN                           ColorDepth;
   UINTN                           WidthInBytes;
@@ -408,7 +411,12 @@ FrameBufferBltLibVideoToBltBuffer (
     CopyMem (Destination, Source, WidthInBytes);
 
     if (Configure->PixelFormat != PixelBlueGreenRedReserved8BitPerColor) {
-      for (IndexX = 0; IndexX < Width; IndexX++) {
+      int neon_copied = FrameBufferBltLibCopy24BitTo32Bit(
+            ((UINT8 *) BltBuffer + (DstY * Delta) + (DestinationX) * sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL)),
+            Configure->LineBuffer,
+            Width
+      );
+      for (IndexX = neon_copied; IndexX < Width; IndexX++) {
         Blt = (EFI_GRAPHICS_OUTPUT_BLT_PIXEL *)
           ((UINT8 *) BltBuffer + (DstY * Delta) +
           (DestinationX + IndexX) * sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
@@ -507,7 +515,14 @@ FrameBufferBltLibBufferToVideo (
     if (Configure->PixelFormat == PixelBlueGreenRedReserved8BitPerColor) {
       Source = (UINT8 *) BltBuffer + (SrcY * Delta);
     } else {
-      for (IndexX = 0; IndexX < Width; IndexX++) {
+      int neon_copied = FrameBufferBltLibCopy32BitTo24Bit(
+            Configure->LineBuffer,
+            (UINT8 *) BltBuffer + (SrcY * Delta) +
+              ((SourceX) * sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL)),
+            Width
+      );
+      //  int neon_copied = 0;
+      for (IndexX = neon_copied; IndexX < Width; IndexX++) {
         Blt =
           (EFI_GRAPHICS_OUTPUT_BLT_PIXEL *) (
               (UINT8 *) BltBuffer +
