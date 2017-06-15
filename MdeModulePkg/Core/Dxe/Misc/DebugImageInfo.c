@@ -185,7 +185,7 @@ CoreNewDebugImageInfoEntry (
   
   if (mDebugInfoTableHeader.TableSize < mMaxTableEntries) {
     //
-    // We still have empty entires in the Table, find the first empty entry.
+    // We still have empty entries in the Table, find the first empty entry.
     //
     Index = 0;
     while (Table[Index].NormalImage != NULL) {
