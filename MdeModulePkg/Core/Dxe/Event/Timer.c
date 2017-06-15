@@ -200,7 +200,7 @@ CoreTimerTick (
   IEVENT          *Event;
 
   //
-  // Check runtiem flag in case there are ticks while exiting boot services
+  // Check runtime flag in case there are ticks while exiting boot services
   //
   CoreAcquireLock (&mEfiSystemTimeLock);
 
