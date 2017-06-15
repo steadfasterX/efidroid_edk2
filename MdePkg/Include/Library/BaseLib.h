@@ -4929,6 +4929,7 @@ SetJump (
 **/
 VOID
 EFIAPI
+NORETURN
 LongJump (
   IN      BASE_LIBRARY_JUMP_BUFFER  *JumpBuffer,
   IN      UINTN                     Value

@@ -442,6 +442,7 @@ InternalAssertJumpBuffer (
 
 **/
 VOID
+NORETURN
 EFIAPI
 InternalLongJump (
   IN      BASE_LIBRARY_JUMP_BUFFER  *JumpBuffer,
