@@ -130,7 +130,8 @@
 [Sources.ARM]
   Arm/ScanMem.S       |GCC
   Arm/SetMem.S        |GCC
-  Arm/CopyMem.S       |GCC
+#  Arm/CopyMem.S       |GCC
+  Arm/memcpy-armv7a.S |GCC
   Arm/CompareMem.S    |GCC
   Arm/CompareGuid.S   |GCC
 
