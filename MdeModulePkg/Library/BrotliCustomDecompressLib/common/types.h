@@ -40,10 +40,9 @@ typedef UINT64   uint64_t;
 
 #if (!defined(_MSC_VER) || (_MSC_VER >= 1800)) && \
   (defined(__cplusplus) || (defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L))
-#include <stdbool.h>
-#define BROTLI_BOOL bool
-#define BROTLI_TRUE true
-#define BROTLI_FALSE false
+#define BROTLI_BOOL BOOLEAN
+#define BROTLI_TRUE TRUE
+#define BROTLI_FALSE FALSE
 #define TO_BROTLI_BOOL(X) (!!(X))
 #else
 typedef enum {
