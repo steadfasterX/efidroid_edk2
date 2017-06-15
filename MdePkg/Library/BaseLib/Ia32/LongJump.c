@@ -28,6 +28,7 @@
 
 **/
 __declspec (naked)
+NORETURN
 VOID
 EFIAPI
 InternalLongJump (

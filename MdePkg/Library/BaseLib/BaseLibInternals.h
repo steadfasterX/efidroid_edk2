@@ -441,6 +441,7 @@ InternalAssertJumpBuffer (
   @param  Value         The value to return when the SetJump() context is restored.
 
 **/
+NORETURN
 VOID
 EFIAPI
 InternalLongJump (

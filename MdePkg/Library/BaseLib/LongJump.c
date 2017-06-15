@@ -33,6 +33,7 @@
                       restored and must be non-zero.
 
 **/
+NORETURN
 VOID
 EFIAPI
 LongJump (
