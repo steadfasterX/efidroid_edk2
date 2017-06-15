@@ -1678,6 +1678,7 @@ InternalShellExecute(
 STATIC
 BOOLEAN
 NestingEnabled(
+  VOID
 )
 {
   EFI_STATUS  Status;
@@ -3285,6 +3286,7 @@ EfiShellIsRootShell(
 **/
 CHAR16 *
 InternalEfiShellGetListAlias(
+  VOID
   )
 {
   
