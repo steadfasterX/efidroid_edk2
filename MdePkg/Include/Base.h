@@ -218,6 +218,16 @@ VERIFY_SIZE_OF (__VERIFY_UINT32_ENUM_SIZE, 4);
   #endif
 #endif
 
+#ifndef RETURNS_TWICE
+  #if defined (__GNUC__) || defined (__clang__)
+    #define RETURNS_TWICE  __attribute__((returns_twice))
+  #elif defined(_MSC_EXTENSIONS) && !defined(MDE_CPU_EBC)
+    #define RETURNS_TWICE
+  #else
+    #define RETURNS_TWICE
+  #endif
+#endif
+
 //
 // For symbol name in assembly code, an extra "_" is sometimes necessary
 //
