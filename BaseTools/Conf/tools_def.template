@@ -7559,6 +7559,12 @@ RELEASE_RVCTCYGWIN_ARM_CC_FLAGS  = "$(CCPATH_FLAG)" $(ARCHCC_FLAGS) $(PLATFORM_F
 *_*_*_TIANO_GUID         = A31280AD-481E-41B6-95E8-127F4C984779
 
 ##################
+# GzipCompress tool definitions
+##################
+*_*_*_GZIP_PATH         = GzipCompress
+*_*_*_GZIP_GUID         = 38BF8EB3-BD52-497A-BD2F-1A9DEF11D84F
+
+##################
 # BPDG tool definitions
 ##################
 *_*_*_VPDTOOL_PATH         = BPDG
