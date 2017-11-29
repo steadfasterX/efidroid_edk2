@@ -1,0 +1,4 @@
+#string STR_MODULE_ABSTRACT             #language en-US "GzipCustomDecompressLib produces GZIP custom decompression algorithm"
+
+#string STR_MODULE_DESCRIPTION          #language en-US ""
+

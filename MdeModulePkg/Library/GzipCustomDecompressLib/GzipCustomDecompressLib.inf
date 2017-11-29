@@ -1,0 +1,43 @@
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = GzipDecompressLib
+  MODULE_UNI_FILE                = GzipDecompressLib.uni
+  FILE_GUID                      = 2D143DF1-B05E-47E6-9965-786C46340F8A
+  MODULE_TYPE                    = BASE
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = NULL
+  CONSTRUCTOR                    = GzipDecompressLibConstructor
+
+[Sources]
+  zlib/adler32.c
+  zlib/compress.c
+  zlib/crc32.c
+  zlib/deflate.c
+  zlib/infback.c
+  zlib/inflate.c
+  zlib/inftrees.c
+  zlib/inffast.c
+  zlib/trees.c
+  zlib/uncompr.c
+  zlib/zutil.c
+
+  GzipDecompress.c
+  GuidedSectionExtraction.c
+  GzipDecompressLibInternal.h
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  MdeModulePkg/Library/GzipCustomDecompressLib/GzipCustomDecompressLib.dec
+
+[Guids]
+  gGzipCustomDecompressGuid  ## PRODUCES  ## UNDEFINED # specifies GZIP custom decompress algorithm.
+
+[LibraryClasses]
+  BaseLib
+  DebugLib
+  BaseMemoryLib
+  ExtractGuidedSectionLib
+
+[BuildOptions]
+  GCC:*_*_*_CC_FLAGS   = -Wno-strict-prototypes
