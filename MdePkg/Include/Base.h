@@ -367,7 +367,13 @@ struct _LIST_ENTRY {
 ///
 /// NULL pointer (VOID *)
 ///
+#ifndef NULL
+#ifndef __cplusplus
 #define NULL  ((VOID *) 0)
+#else   /* C++ */
+#define NULL  0
+#endif  /* C++ */
+#endif
 
 //
 // Null character
