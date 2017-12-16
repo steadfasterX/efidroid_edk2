@@ -119,4 +119,11 @@ PeCoffSearchImageBase (
   IN UINTN    Address
   );
 
+VOID *
+EFIAPI
+PeCoffLoaderGetUnwindTable (
+  IN VOID  *Pe32Data,
+  OUT UINTN *Size
+  );
+
 #endif

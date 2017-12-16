@@ -59,3 +59,6 @@
 	.long __aeabi_ldivmod - .
 	.long __aeabi_llsr - .
 	.long __aeabi_llsl - .
+	.long __aeabi_unwind_cpp_pr0 - .
+	.long __aeabi_unwind_cpp_pr1 - .
+	.long __aeabi_unwind_cpp_pr2 - .

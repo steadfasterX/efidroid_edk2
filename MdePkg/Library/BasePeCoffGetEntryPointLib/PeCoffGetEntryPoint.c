@@ -386,3 +386,102 @@ PeCoffSearchImageBase (
 
   return Pe32Data;
 }
+
+VOID *
+EFIAPI
+PeCoffLoaderGetUnwindTable (
+  IN VOID  *Pe32Data,
+  OUT UINTN *Size
+  )
+{
+  EFI_IMAGE_DOS_HEADER                  *DosHdr;
+  EFI_IMAGE_OPTIONAL_HEADER_PTR_UNION   Hdr;
+  EFI_IMAGE_DATA_DIRECTORY              *DirectoryEntry;
+  VOID                                  *UnwindEntry;
+  UINTN                                 UnwindSize;
+  INTN                                  TEImageAdjust;
+  UINT32                                NumberOfRvaAndSizes;
+  UINT16                                Magic;
+
+  ASSERT (Pe32Data   != NULL);
+
+  TEImageAdjust       = 0;
+  DirectoryEntry      = NULL;
+  UnwindEntry         = NULL;
+  NumberOfRvaAndSizes = 0;
+
+  DosHdr = (EFI_IMAGE_DOS_HEADER *)Pe32Data;
+  if (DosHdr->e_magic == EFI_IMAGE_DOS_SIGNATURE) {
+    //
+    // DOS image header is present, so read the PE header after the DOS image header.
+    //
+    Hdr.Pe32 = (EFI_IMAGE_NT_HEADERS32 *)((UINTN) Pe32Data + (UINTN) ((DosHdr->e_lfanew) & 0x0ffff));
+  } else {
+    //
+    // DOS image header is not present, so PE header is at the image base.
+    //
+    Hdr.Pe32 = (EFI_IMAGE_NT_HEADERS32 *)Pe32Data;
+  }
+
+  if (Hdr.Te->Signature == EFI_TE_IMAGE_HEADER_SIGNATURE) {
+    ASSERT(FALSE);
+  } else if (Hdr.Pe32->Signature == EFI_IMAGE_NT_SIGNATURE) {
+    //
+    // NOTE: We use Machine field to identify PE32/PE32+, instead of Magic.
+    //       It is due to backward-compatibility, for some system might
+    //       generate PE32+ image with PE32 Magic.
+    //
+    switch (Hdr.Pe32->FileHeader.Machine) {
+    case IMAGE_FILE_MACHINE_I386:
+      //
+      // Assume PE32 image with IA32 Machine field.
+      //
+      Magic = EFI_IMAGE_NT_OPTIONAL_HDR32_MAGIC;
+      break;
+    case IMAGE_FILE_MACHINE_X64:
+    case IMAGE_FILE_MACHINE_IA64:
+      //
+      // Assume PE32+ image with x64 or IA64 Machine field
+      //
+      Magic = EFI_IMAGE_NT_OPTIONAL_HDR64_MAGIC;
+      break;
+    default:
+      //
+      // For unknow Machine field, use Magic in optional Header
+      //
+      Magic = Hdr.Pe32->OptionalHeader.Magic;
+    }
+
+    if (Magic == EFI_IMAGE_NT_OPTIONAL_HDR32_MAGIC) {
+      //
+      // Use PE32 offset get Debug Directory Entry
+      //
+      NumberOfRvaAndSizes = Hdr.Pe32->OptionalHeader.NumberOfRvaAndSizes;
+      DirectoryEntry = (EFI_IMAGE_DATA_DIRECTORY *)&(Hdr.Pe32->OptionalHeader.DataDirectory[EFI_IMAGE_DIRECTORY_ENTRY_UNWIND]);
+      UnwindEntry    = (VOID *) ((UINTN) Pe32Data + DirectoryEntry->VirtualAddress);
+      UnwindSize     = DirectoryEntry->Size;
+    } else if (Hdr.Pe32->OptionalHeader.Magic == EFI_IMAGE_NT_OPTIONAL_HDR64_MAGIC) {
+      //
+      // Use PE32+ offset get Debug Directory Entry
+      //
+      NumberOfRvaAndSizes = Hdr.Pe32Plus->OptionalHeader.NumberOfRvaAndSizes;
+      DirectoryEntry = (EFI_IMAGE_DATA_DIRECTORY *)&(Hdr.Pe32Plus->OptionalHeader.DataDirectory[EFI_IMAGE_DIRECTORY_ENTRY_UNWIND]);
+      UnwindEntry    = (VOID *) ((UINTN) Pe32Data + DirectoryEntry->VirtualAddress);
+      UnwindSize     = DirectoryEntry->Size;
+    }
+
+    if (NumberOfRvaAndSizes <= EFI_IMAGE_DIRECTORY_ENTRY_UNWIND) {
+      DirectoryEntry = NULL;
+      UnwindEntry = NULL;
+    }
+  } else {
+    return NULL;
+  }
+
+  if (UnwindEntry == NULL || DirectoryEntry == NULL) {
+    return NULL;
+  }
+
+  *Size = UnwindSize;
+  return UnwindEntry;
+}

@@ -101,7 +101,7 @@ STATIC UINT32 mCoffAlignment = 0x20;
 //
 // PE section alignment.
 //
-STATIC const UINT16 mCoffNbrSections = 4;
+STATIC const UINT16 mCoffNbrSections = 5;
 
 //
 // ELF sections to offset in Coff file.
@@ -115,6 +115,7 @@ STATIC UINT32 mNtHdrOffset;
 STATIC UINT32 mTextOffset;
 STATIC UINT32 mDataOffset;
 STATIC UINT32 mHiiRsrcOffset;
+STATIC UINT32 mUnwindOffset;
 STATIC UINT32 mRelocOffset;
 STATIC UINT32 mDebugOffset;
 
@@ -235,15 +236,29 @@ DebugRvaAlign (
   return (Offset + 3) & ~3;
 }
 
+#define SHT_ARM_EXIDX		(SHT_LOPROC + 1) /* ARM unwind section.  */
+
 //
 // filter functions
 //
+STATIC
+BOOLEAN
+IsUnwindShdr (
+  Elf_Shdr *Shdr
+  )
+{
+  return (Shdr->sh_type == SHT_ARM_EXIDX);
+}
+
 STATIC
 BOOLEAN
 IsTextShdr (
   Elf_Shdr *Shdr
   )
 {
+  if (IsUnwindShdr(Shdr)) {
+    return FALSE;
+  }
   return (BOOLEAN) ((Shdr->sh_flags & (SHF_WRITE | SHF_ALLOC)) == SHF_ALLOC);
 }
 
@@ -265,6 +280,9 @@ IsDataShdr (
   )
 {
   if (IsHiiRsrcShdr(Shdr)) {
+    return FALSE;
+  }
+  if (IsUnwindShdr(Shdr)) {
     return FALSE;
   }
   return (BOOLEAN) (Shdr->sh_flags & (SHF_WRITE | SHF_ALLOC)) == (SHF_ALLOC | SHF_WRITE);
@@ -378,7 +396,7 @@ ScanSections32 (
     if (shdr->sh_addralign <= mCoffAlignment) {
       continue;
     }
-    if (IsTextShdr(shdr) || IsDataShdr(shdr) || IsHiiRsrcShdr(shdr)) {
+    if (IsTextShdr(shdr) || IsDataShdr(shdr) || IsHiiRsrcShdr(shdr) || IsUnwindShdr(shdr)) {
       mCoffAlignment = (UINT32)shdr->sh_addralign;
     }
   }
@@ -501,6 +519,32 @@ ScanSections32 (
   }
 
   //
+  //  The unwind resource sections.
+  //
+  mUnwindOffset = mCoffOffset;
+  for (i = 0; i < mEhdr->e_shnum; i++) {
+    Elf_Shdr *shdr = GetShdrByIndex(i);
+    if (IsUnwindShdr(shdr)) {
+      if ((shdr->sh_addralign != 0) && (shdr->sh_addralign != 1)) {
+        // the alignment field is valid
+        if ((shdr->sh_addr & (shdr->sh_addralign - 1)) == 0) {
+          // if the section address is aligned we must align PE/COFF
+          mCoffOffset = (mCoffOffset + shdr->sh_addralign - 1) & ~(shdr->sh_addralign - 1);
+        } else {
+          Error (NULL, 0, 3000, "Invalid", "Section address not aligned to its own alignment.");
+        }
+      }
+      if (shdr->sh_size != 0) {
+        mUnwindOffset = mCoffOffset;
+        mCoffSectionsOffset[i] = mCoffOffset;
+        mCoffOffset += shdr->sh_size;
+        mCoffOffset = CoffAlign(mCoffOffset);
+      }
+      break;
+    }
+  }
+
+  //
   //  The HII resource sections.
   //
   mHiiRsrcOffset = mCoffOffset;
@@ -605,11 +649,22 @@ ScanSections32 (
     NtHdr->Pe32.FileHeader.NumberOfSections--;
   }
 
-  if ((mHiiRsrcOffset - mDataOffset) > 0) {
-    CreateSectionHeader (".data", mDataOffset, mHiiRsrcOffset - mDataOffset,
+  if ((mUnwindOffset - mDataOffset) > 0) {
+    CreateSectionHeader (".data", mDataOffset, mUnwindOffset - mDataOffset,
             EFI_IMAGE_SCN_CNT_INITIALIZED_DATA
             | EFI_IMAGE_SCN_MEM_WRITE
             | EFI_IMAGE_SCN_MEM_READ);
+  } else {
+    // Don't make a section of size 0.
+    NtHdr->Pe32.FileHeader.NumberOfSections--;
+  }
+
+  if ((mHiiRsrcOffset - mUnwindOffset) > 0) {
+    CreateSectionHeader (".unwd", mUnwindOffset, mHiiRsrcOffset - mUnwindOffset,
+            EFI_IMAGE_SCN_CNT_INITIALIZED_DATA
+            | EFI_IMAGE_SCN_MEM_READ);
+    NtHdr->Pe32.OptionalHeader.DataDirectory[EFI_IMAGE_DIRECTORY_ENTRY_UNWIND].Size = mHiiRsrcOffset - mUnwindOffset;
+    NtHdr->Pe32.OptionalHeader.DataDirectory[EFI_IMAGE_DIRECTORY_ENTRY_UNWIND].VirtualAddress = mUnwindOffset;
   } else {
     // Don't make a section of size 0.
     NtHdr->Pe32.FileHeader.NumberOfSections--;
@@ -650,6 +705,9 @@ WriteSections32 (
     case SECTION_HII:
       Filter = IsHiiRsrcShdr;
       break;
+    case SECTION_UNWIND:
+      Filter = IsUnwindShdr;
+      break;
     case SECTION_DATA:
       Filter = IsDataShdr;
       break;
@@ -664,6 +722,14 @@ WriteSections32 (
     Elf_Shdr *Shdr = GetShdrByIndex(Idx);
     if ((*Filter)(Shdr)) {
       switch (Shdr->sh_type) {
+      case SHT_ARM_EXIDX:
+        /* Copy.  */
+        printf("unwind coffoff=%08x elfoff=%08x\n", mCoffSectionsOffset[Idx], Shdr->sh_offset);
+        memcpy(mCoffFile + mCoffSectionsOffset[Idx],
+              (UINT8*)mEhdr + Shdr->sh_offset,
+              Shdr->sh_size);
+        break;
+
       case SHT_PROGBITS:
         /* Copy.  */
         memcpy(mCoffFile + mCoffSectionsOffset[Idx],
@@ -793,6 +859,7 @@ WriteSections32 (
         } else if (mEhdr->e_machine == EM_ARM) {
           switch (ELF32_R_TYPE(Rel->r_info)) {
           case R_ARM_RBASE:
+          case R_ARM_NONE:
             // No relocation - no action required
             // break skipped
 
@@ -920,6 +987,7 @@ WriteRelocations32 (
           } else if (mEhdr->e_machine == EM_ARM) {
             switch (ELF32_R_TYPE(Rel->r_info)) {
             case R_ARM_RBASE:
+            case R_ARM_NONE:
               // No relocation - no action required
               // break skipped
 

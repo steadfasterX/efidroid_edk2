@@ -43,7 +43,8 @@ extern UINT32 mOutImageType;
 typedef enum {
   SECTION_TEXT,
   SECTION_HII,
-  SECTION_DATA
+  SECTION_DATA,
+  SECTION_UNWIND
   
 } SECTION_FILTER_TYPES;
 

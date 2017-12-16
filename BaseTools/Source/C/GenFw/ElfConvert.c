@@ -204,6 +204,7 @@ ConvertElf (
   ElfFunctions.WriteSections (SECTION_TEXT);
   ElfFunctions.WriteSections (SECTION_DATA);
   ElfFunctions.WriteSections (SECTION_HII);
+  ElfFunctions.WriteSections (SECTION_UNWIND);
 
   //
   // Translate and write relocations.

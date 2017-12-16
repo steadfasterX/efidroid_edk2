@@ -303,6 +303,7 @@ typedef struct {
 #define EFI_IMAGE_DIRECTORY_ENTRY_GLOBALPTR   8
 #define EFI_IMAGE_DIRECTORY_ENTRY_TLS         9
 #define EFI_IMAGE_DIRECTORY_ENTRY_LOAD_CONFIG 10
+#define EFI_IMAGE_DIRECTORY_ENTRY_UNWIND      11
 
 //
 // Section header format.

@@ -41,4 +41,16 @@ void __aeabi_memcpy4(void *dest, const void *src, size_t n);
 __attribute__((__alias__("__memcpy")))
 void __aeabi_memcpy8(void *dest, const void *src, size_t n);
 
+__attribute__((__used__))
+void __aeabi_unwind_cpp_pr0(void){
+}
+
+__attribute__((__used__))
+void __aeabi_unwind_cpp_pr1(void){
+}
+
+__attribute__((__used__))
+void __aeabi_unwind_cpp_pr2(void){
+}
+
 #endif

@@ -53,6 +53,12 @@ SECTIONS {
     *(.bss .bss.*)
   }
 
+  .ARM.exidx ALIGN(ALIGNOF(.data)) : ALIGN(CONSTANT(COMMONPAGESIZE)) {
+    PROVIDE_HIDDEN (__exidx_start = .);
+    *(.ARM.exidx* .gnu.linkonce.armexidx.*)
+    PROVIDE_HIDDEN (__exidx_end = .);
+  }
+
   .eh_frame ALIGN(CONSTANT(COMMONPAGESIZE)) : {
     KEEP (*(.eh_frame))
   }
